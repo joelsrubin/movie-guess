@@ -36,7 +36,6 @@ async function getMovies(): Promise<Movie[]> {
                   year: parseInt(detailData.Year),
                   genres: detailData.Genre ? detailData.Genre.split(", ") : [],
                   imdbId: detailData.imdbID,
-                  poster: detailData.Poster !== "N/A" ? detailData.Poster : "",
                 }
               }
               return null
@@ -62,5 +61,6 @@ async function getMovies(): Promise<Movie[]> {
 
 export default async function Home() {
   const movies = await getMovies()
+  console.log({movies})
   return <MovieRoulette movies={movies} />
 }

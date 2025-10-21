@@ -98,15 +98,8 @@ export function MovieRoulette({ movies }: MovieRouletteProps) {
               <div className="min-h-[200px] flex items-center justify-center">
                 {selectedMovie ? (
                   <div className="text-center space-y-4 animate-in fade-in duration-300">
-                    {selectedMovie.poster && (
-                      <div className="flex justify-center mb-4">
-                        <img
-                          src={selectedMovie.poster}
-                          alt={`${selectedMovie.title} poster`}
-                          className="rounded-lg shadow-lg max-h-[400px] object-cover"
-                        />
-                      </div>
-                    )}
+
+
                     <h2 className="text-3xl md:text-5xl font-bold text-balance">{selectedMovie.title}</h2>
                     <p className="text-xl md:text-2xl text-muted-foreground">{selectedMovie.year}</p>
                     <div className="flex flex-wrap gap-2 justify-center">
