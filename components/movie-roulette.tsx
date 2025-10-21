@@ -1,54 +1,51 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Film, Sparkles } from "lucide-react"
+import { Film, Sparkles, ExternalLink } from "lucide-react"
 import { GenreFilters } from "@/components/genre-filters"
+import { YearFilter } from "@/components/year-filter"
 
-const movies = [
-  { title: "The Shawshank Redemption", year: 1994, genres: ["Drama", "Crime"] },
-  { title: "The Godfather", year: 1972, genres: ["Drama", "Crime"] },
-  { title: "The Dark Knight", year: 2008, genres: ["Action", "Crime", "Drama"] },
-  { title: "Pulp Fiction", year: 1994, genres: ["Crime", "Drama"] },
-  { title: "Forrest Gump", year: 1994, genres: ["Drama", "Romance"] },
-  { title: "Inception", year: 2010, genres: ["Action", "Sci-Fi", "Thriller"] },
-  { title: "The Matrix", year: 1999, genres: ["Action", "Sci-Fi"] },
-  { title: "Goodfellas", year: 1990, genres: ["Crime", "Drama"] },
-  { title: "The Silence of the Lambs", year: 1991, genres: ["Crime", "Drama", "Thriller"] },
-  { title: "Interstellar", year: 2014, genres: ["Adventure", "Drama", "Sci-Fi"] },
-  { title: "Parasite", year: 2019, genres: ["Drama", "Thriller"] },
-  { title: "Spirited Away", year: 2001, genres: ["Animation", "Adventure", "Fantasy"] },
-  { title: "The Prestige", year: 2006, genres: ["Drama", "Mystery", "Thriller"] },
-  { title: "Whiplash", year: 2014, genres: ["Drama", "Music"] },
-  { title: "Gladiator", year: 2000, genres: ["Action", "Adventure", "Drama"] },
-  { title: "The Departed", year: 2006, genres: ["Crime", "Drama", "Thriller"] },
-  { title: "The Lion King", year: 1994, genres: ["Animation", "Adventure", "Drama"] },
-  { title: "Back to the Future", year: 1985, genres: ["Adventure", "Comedy", "Sci-Fi"] },
-  { title: "Alien", year: 1979, genres: ["Horror", "Sci-Fi"] },
-  { title: "The Shining", year: 1980, genres: ["Drama", "Horror"] },
-  { title: "Toy Story", year: 1995, genres: ["Animation", "Adventure", "Comedy"] },
-  { title: "Jurassic Park", year: 1993, genres: ["Action", "Adventure", "Sci-Fi"] },
-  { title: "The Truman Show", year: 1998, genres: ["Comedy", "Drama", "Sci-Fi"] },
-  { title: "Eternal Sunshine of the Spotless Mind", year: 2004, genres: ["Drama", "Romance", "Sci-Fi"] },
-  { title: "Mad Max: Fury Road", year: 2015, genres: ["Action", "Adventure", "Sci-Fi"] },
-]
+interface Movie {
+  title: string
+  year: number
+  genres: string[]
+  imdbId: string
+  poster: string
+}
 
-export function MovieRoulette() {
+interface MovieRouletteProps {
+  movies: Movie[]
+}
+
+export function MovieRoulette({ movies }: MovieRouletteProps) {
   const [selectedMovie, setSelectedMovie] = useState<(typeof movies)[0] | null>(null)
   const [isSpinning, setIsSpinning] = useState(false)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [selectedYears, setSelectedYears] = useState<number[]>([])
+
+  const availableYears = useMemo(() => {
+    const years = [...new Set(movies.map((movie) => movie.year))]
+    return years.sort((a, b) => b - a)
+  }, [movies])
 
   const handleSpin = () => {
     setIsSpinning(true)
     setSelectedMovie(null)
 
-    // Filter movies by selected genres
-    const filteredMovies =
-      selectedGenres.length > 0
-        ? movies.filter((movie) => selectedGenres.some((genre) => movie.genres.includes(genre)))
-        : movies
+    let filteredMovies = movies
+
+    if (selectedGenres.length > 0) {
+      filteredMovies = filteredMovies.filter((movie) =>
+        selectedGenres.some((genre) => movie.genres.includes(genre))
+      )
+    }
+
+    if (selectedYears.length > 0) {
+      filteredMovies = filteredMovies.filter((movie) => selectedYears.includes(movie.year))
+    }
 
     if (filteredMovies.length === 0) {
       setIsSpinning(false)
@@ -87,12 +84,28 @@ export function MovieRoulette() {
           {/* Genre Filters */}
           <GenreFilters selectedGenres={selectedGenres} onGenresChange={setSelectedGenres} />
 
+          {/* Year Filter */}
+          <YearFilter 
+            availableYears={availableYears}
+            selectedYears={selectedYears}
+            onYearsChange={setSelectedYears}
+          />
+
           {/* Movie Display Card */}
           <Card className="p-8 md:p-12 bg-card border-2 shadow-lg">
             <div className="space-y-8">
               <div className="min-h-[200px] flex items-center justify-center">
                 {selectedMovie ? (
                   <div className="text-center space-y-4 animate-in fade-in duration-300">
+                    {selectedMovie.poster && (
+                      <div className="flex justify-center mb-4">
+                        <img
+                          src={selectedMovie.poster}
+                          alt={`${selectedMovie.title} poster`}
+                          className="rounded-lg shadow-lg max-h-[400px] object-cover"
+                        />
+                      </div>
+                    )}
                     <h2 className="text-3xl md:text-5xl font-bold text-balance">{selectedMovie.title}</h2>
                     <p className="text-xl md:text-2xl text-muted-foreground">{selectedMovie.year}</p>
                     <div className="flex flex-wrap gap-2 justify-center">
@@ -102,6 +115,14 @@ export function MovieRoulette() {
                         </Badge>
                       ))}
                     </div>
+                    <a
+                      href={`https://www.imdb.com/title/${selectedMovie.imdbId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-primary hover:underline mt-4"
+                    >
+                      View on IMDb <ExternalLink className="w-4 h-4" />
+                    </a>
                   </div>
                 ) : (
                   <div className="text-center space-y-4">
@@ -133,9 +154,14 @@ export function MovieRoulette() {
           {/* Info Section */}
           <div className="text-center text-sm text-muted-foreground">
             <p>
-              {selectedGenres.length > 0
-                ? `Filtering by: ${selectedGenres.join(", ")}`
-                : "Select genres above to filter your movie selection"}
+              {selectedGenres.length > 0 || selectedYears.length > 0
+                ? `Filtering by: ${[
+                    selectedGenres.length > 0 ? `Genres: ${selectedGenres.join(", ")}` : "",
+                    selectedYears.length > 0 ? `Years: ${selectedYears.join(", ")}` : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" | ")}`
+                : "Select genres or years above to filter your movie selection"}
             </p>
           </div>
         </div>
