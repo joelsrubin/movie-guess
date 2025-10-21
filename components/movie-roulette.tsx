@@ -23,14 +23,14 @@ export function MovieRoulette() {
   const [isSpinning, setIsSpinning] = useState(false)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedYears, setSelectedYears] = useState<number[]>([])
-
+  const [errors, setErrors] = useState<{genre: string; year: string;}>({genre: '', year: ''})
   const currentYear = new Date().getFullYear()
   const startYear = currentYear - 5
   const availableYears = Array.from({ length: currentYear - startYear + 1 }, (_, i) => currentYear - i)
 
   const handleSpin = async () => {
     if (selectedGenres.length === 0 || selectedYears.length === 0) {
-      alert("Please select at least one genre and one year")
+      setErrors({genre: selectedGenres.length === 0 ? "Please select at least one genre" : "", year: selectedYears.length === 0 ? "Please select at least one year" : ""})
       return
     }
 
@@ -73,16 +73,16 @@ export function MovieRoulette() {
           }, 100)
         } else {
           setIsSpinning(false)
-          alert("No movie found with the selected filters")
+          setErrors({genre: "", year: "No movie found with the selected filters"})
         }
       } else {
         setIsSpinning(false)
-        alert("No movies found with the selected filters. Try different combinations.")
+        setErrors({genre: "", year: "No movies found with the selected filters. Try different combinations."})
       }
     } catch (error) {
       console.error("Failed to fetch movie:", error)
       setIsSpinning(false)
-      alert("Failed to fetch movie. Please try again.")
+          setErrors({genre: "", year: "Failed to fetch movie. Please try again."})
     }
   }
 
@@ -102,10 +102,14 @@ export function MovieRoulette() {
           </div>
 
           {/* Genre Filters */}
-          <GenreFilters selectedGenres={selectedGenres} onGenresChange={setSelectedGenres} />
+          <GenreFilters 
+            setErrors={setErrors}
+            error={errors.genre} selectedGenres={selectedGenres} onGenresChange={setSelectedGenres} />
 
           {/* Year Filter */}
           <YearFilter 
+          setErrors={setErrors}
+            error={errors.year}
             availableYears={availableYears}
             selectedYears={selectedYears}
             onYearsChange={setSelectedYears}
@@ -122,6 +126,7 @@ export function MovieRoulette() {
                         <img
                           src={selectedMovie.poster}
                           alt={`${selectedMovie.title} poster`}
+                          
                           className="rounded-lg shadow-lg max-h-[400px] object-cover"
                         />
                       </div>

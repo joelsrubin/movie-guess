@@ -1,17 +1,20 @@
 "use client"
 
+import { X } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
 
 interface YearFilterProps {
   availableYears: number[]
   selectedYears: number[]
   onYearsChange: (years: number[]) => void
+  error: string
+  setErrors: React.Dispatch<React.SetStateAction<{ genre: string; year: string }>>
 }
 
-export function YearFilter({ availableYears, selectedYears, onYearsChange }: YearFilterProps) {
+export function YearFilter({ availableYears, selectedYears, onYearsChange, error, setErrors }: YearFilterProps) {
   const toggleYear = (year: number) => {
+    setErrors((prev) => ({ ...prev, year: "" }))
     if (selectedYears.includes(year)) {
       onYearsChange(selectedYears.filter((y) => y !== year))
     } else {
@@ -51,6 +54,7 @@ export function YearFilter({ availableYears, selectedYears, onYearsChange }: Yea
           )
         })}
       </div>
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
     </div>
   )
 }

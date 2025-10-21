@@ -1,8 +1,9 @@
 "use client"
 
+import { X } from "lucide-react"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
 
 const allGenres = [
   "Action",
@@ -23,10 +24,13 @@ const allGenres = [
 interface GenreFiltersProps {
   selectedGenres: string[]
   onGenresChange: (genres: string[]) => void
+  error: string
+  setErrors: React.Dispatch<React.SetStateAction<{ genre: string; year: string }>>
 }
 
-export function GenreFilters({ selectedGenres, onGenresChange }: GenreFiltersProps) {
+export function GenreFilters({ selectedGenres, onGenresChange, error, setErrors }: GenreFiltersProps) {
   const toggleGenre = (genre: string) => {
+    setErrors((prev) => ({ ...prev, genre: "" }))
     if (selectedGenres.includes(genre)) {
       onGenresChange(selectedGenres.filter((g) => g !== genre))
     } else {
@@ -66,6 +70,7 @@ export function GenreFilters({ selectedGenres, onGenresChange }: GenreFiltersPro
           )
         })}
       </div>
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
     </div>
   )
 }
