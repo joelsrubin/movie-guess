@@ -50,7 +50,7 @@ export function MovieRoulette() {
         const randomMovie = data.Search[Math.floor(Math.random() * data.Search.length)]
 
         const detailResponse = await fetch(
-          `http://www.omdbapi.com/?apikey=${API_KEY}&i=${randomMovie.imdbID}`
+          `https://www.omdbapi.com/?apikey=${API_KEY}&i=${randomMovie.imdbID}`
         )
         const detailData = await detailResponse.json()
 
