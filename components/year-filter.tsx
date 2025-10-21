@@ -89,7 +89,7 @@ export function YearFilter({ availableYears, selectedYears, onYearsChange, error
       </div>
       
       <div className="space-y-3">
-        <div className="flex flex-row">
+        <div className="flex flex-row flex-wrap">
           {decades.map((decade) => {
             const decadeYears = getYearsInDecade(decade)
             const isExpanded = expandedDecade === decade
@@ -132,7 +132,7 @@ export function YearFilter({ availableYears, selectedYears, onYearsChange, error
         </div>
         
         {expandedDecade !== null && (
-          <div className="flex flex-row gap-2 ml-4 pl-4 border-l-2 border-border">
+          <div className="flex flex-row flex-wrap gap-2 ml-4 pl-4 border-l-2 border-border">
             {getYearsInDecade(expandedDecade).map((year) => {
               const isSelected = selectedYears.includes(year)
               return (
