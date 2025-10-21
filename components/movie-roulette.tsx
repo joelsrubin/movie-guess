@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
-
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -17,54 +16,74 @@ interface Movie {
   poster: string
 }
 
-interface MovieRouletteProps {
-  movies: Movie[]
-}
+const API_KEY = "d95ad1f7"
 
-export function MovieRoulette({ movies }: MovieRouletteProps) {
-  const [selectedMovie, setSelectedMovie] = useState<(typeof movies)[0] | null>(null)
+export function MovieRoulette() {
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
   const [isSpinning, setIsSpinning] = useState(false)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedYears, setSelectedYears] = useState<number[]>([])
 
-  const availableYears = useMemo(() => {
-    const years = [...new Set(movies.map((movie) => movie.year))]
-    return years.sort((a, b) => b - a)
-  }, [movies])
+  const currentYear = new Date().getFullYear()
+  const startYear = currentYear - 5
+  const availableYears = Array.from({ length: currentYear - startYear + 1 }, (_, i) => currentYear - i)
 
-  const handleSpin = () => {
-    setIsSpinning(true)
-    setSelectedMovie(null)
-
-    let filteredMovies = movies
-
-    if (selectedGenres.length > 0) {
-      filteredMovies = filteredMovies.filter((movie) =>
-        selectedGenres.some((genre) => movie.genres.includes(genre))
-      )
-    }
-
-    if (selectedYears.length > 0) {
-      filteredMovies = filteredMovies.filter((movie) => selectedYears.includes(movie.year))
-    }
-
-    if (filteredMovies.length === 0) {
-      setIsSpinning(false)
+  const handleSpin = async () => {
+    if (selectedGenres.length === 0 || selectedYears.length === 0) {
+      alert("Please select at least one genre and one year")
       return
     }
 
-    // Simulate spinning animation
-    let counter = 0
-    const interval = setInterval(() => {
-      const randomIndex = Math.floor(Math.random() * filteredMovies.length)
-      setSelectedMovie(filteredMovies[randomIndex])
-      counter++
+    setIsSpinning(true)
+    setSelectedMovie(null)
 
-      if (counter > 15) {
-        clearInterval(interval)
+    const randomGenre = selectedGenres[Math.floor(Math.random() * selectedGenres.length)]
+    const randomYear = selectedYears[Math.floor(Math.random() * selectedYears.length)]
+
+    try {
+      const response = await fetch(
+        `http://www.omdbapi.com/?apikey=${API_KEY}&s=${randomGenre}&type=movie&y=${randomYear}`
+      )
+      const data = await response.json()
+
+      if (data.Response === "True" && data.Search && data.Search.length > 0) {
+        const randomMovie = data.Search[Math.floor(Math.random() * data.Search.length)]
+
+        const detailResponse = await fetch(
+          `http://www.omdbapi.com/?apikey=${API_KEY}&i=${randomMovie.imdbID}`
+        )
+        const detailData = await detailResponse.json()
+
+        if (detailData.Response === "True") {
+          let counter = 0
+          const interval = setInterval(() => {
+            if (counter < 15) {
+              setSelectedMovie({
+                title: detailData.Title,
+                year: parseInt(detailData.Year),
+                genres: detailData.Genre ? detailData.Genre.split(", ") : [],
+                imdbId: detailData.imdbID,
+                poster: detailData.Poster !== "N/A" ? detailData.Poster : "",
+              })
+              counter++
+            } else {
+              clearInterval(interval)
+              setIsSpinning(false)
+            }
+          }, 100)
+        } else {
+          setIsSpinning(false)
+          alert("No movie found with the selected filters")
+        }
+      } else {
         setIsSpinning(false)
+        alert("No movies found with the selected filters. Try different combinations.")
       }
-    }, 100)
+    } catch (error) {
+      console.error("Failed to fetch movie:", error)
+      setIsSpinning(false)
+      alert("Failed to fetch movie. Please try again.")
+    }
   }
 
   return (
@@ -98,8 +117,15 @@ export function MovieRoulette({ movies }: MovieRouletteProps) {
               <div className="min-h-[200px] flex items-center justify-center">
                 {selectedMovie ? (
                   <div className="text-center space-y-4 animate-in fade-in duration-300">
-
-
+                    {selectedMovie.poster && (
+                      <div className="flex justify-center mb-4">
+                        <img
+                          src={selectedMovie.poster}
+                          alt={`${selectedMovie.title} poster`}
+                          className="rounded-lg shadow-lg max-h-[400px] object-cover"
+                        />
+                      </div>
+                    )}
                     <h2 className="text-3xl md:text-5xl font-bold text-balance">{selectedMovie.title}</h2>
                     <p className="text-xl md:text-2xl text-muted-foreground">{selectedMovie.year}</p>
                     <div className="flex flex-wrap gap-2 justify-center">
@@ -122,9 +148,9 @@ export function MovieRoulette({ movies }: MovieRouletteProps) {
                   <div className="text-center space-y-4">
                     <Film className="w-20 h-20 mx-auto text-muted-foreground/30" />
                     <p className="text-xl text-muted-foreground">
-                      {selectedGenres.length > 0
-                        ? "Ready to spin with your selected genres!"
-                        : "Press the button to discover your movie"}
+                      {selectedGenres.length > 0 && selectedYears.length > 0
+                        ? "Ready to spin with your selected filters!"
+                        : "Select at least one genre and one year to start"}
                     </p>
                   </div>
                 )}
