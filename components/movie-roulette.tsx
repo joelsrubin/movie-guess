@@ -12,11 +12,28 @@ interface Movie {
   title: string
   year: number
   genres: string[]
-  imdbId: string
+  id: number
   poster: string
 }
 
-const API_KEY = "d95ad1f7"
+const API_KEY = "57f535f358393665753c938201a145cb"
+const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
+
+const genreMap: Record<string, number> = {
+  "Action": 28,
+  "Adventure": 12,
+  "Animation": 16,
+  "Comedy": 35,
+  "Crime": 80,
+  "Drama": 18,
+  "Fantasy": 14,
+  "Horror": 27,
+  "Music": 10402,
+  "Mystery": 9648,
+  "Romance": 10749,
+  "Sci-Fi": 878,
+  "Thriller": 53,
+}
 
 export function MovieRoulette() {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
@@ -39,31 +56,32 @@ export function MovieRoulette() {
 
     const randomGenre = selectedGenres[Math.floor(Math.random() * selectedGenres.length)]
     const randomYear = selectedYears[Math.floor(Math.random() * selectedYears.length)]
+    const genreId = genreMap[randomGenre]
 
     try {
       const response = await fetch(
-        `https://www.omdbapi.com/?apikey=${API_KEY}&s=${randomGenre}&type=movie&y=${randomYear}`
+        `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&primary_release_year=${randomYear}&sort_by=popularity.desc`
       )
       const data = await response.json()
 
-      if (data.Response === "True" && data.Search && data.Search.length > 0) {
-        const randomMovie = data.Search[Math.floor(Math.random() * data.Search.length)]
+      if (data.results && data.results.length > 0) {
+        const randomMovie = data.results[Math.floor(Math.random() * data.results.length)]
 
         const detailResponse = await fetch(
-          `https://www.omdbapi.com/?apikey=${API_KEY}&i=${randomMovie.imdbID}`
+          `https://api.themoviedb.org/3/movie/${randomMovie.id}?api_key=${API_KEY}`
         )
         const detailData = await detailResponse.json()
 
-        if (detailData.Response === "True") {
+        if (detailData.id) {
           let counter = 0
           const interval = setInterval(() => {
             if (counter < 15) {
               setSelectedMovie({
-                title: detailData.Title,
-                year: parseInt(detailData.Year),
-                genres: detailData.Genre ? detailData.Genre.split(", ") : [],
-                imdbId: detailData.imdbID,
-                poster: detailData.Poster !== "N/A" ? detailData.Poster : "",
+                title: detailData.title,
+                year: new Date(detailData.release_date).getFullYear(),
+                genres: detailData.genres ? detailData.genres.map((g: any) => g.name) : [],
+                id: detailData.id,
+                poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
               })
               counter++
             } else {
@@ -141,12 +159,12 @@ export function MovieRoulette() {
                       ))}
                     </div>
                     <a
-                      href={`https://www.imdb.com/title/${selectedMovie.imdbId}`}
+                      href={`https://www.themoviedb.org/movie/${selectedMovie.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 text-primary hover:underline mt-4"
                     >
-                      View on IMDb <ExternalLink className="w-4 h-4" />
+                      View on TMDB <ExternalLink className="w-4 h-4" />
                     </a>
                   </div>
                 ) : (
