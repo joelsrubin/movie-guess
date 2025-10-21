@@ -42,7 +42,7 @@ export function MovieRoulette() {
 
     try {
       const response = await fetch(
-        `http://www.omdbapi.com/?apikey=${API_KEY}&s=${randomGenre}&type=movie&y=${randomYear}`
+        `https://www.omdbapi.com/?apikey=${API_KEY}&s=${randomGenre}&type=movie&y=${randomYear}`
       )
       const data = await response.json()
 
