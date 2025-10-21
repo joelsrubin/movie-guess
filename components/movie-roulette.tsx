@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge"
 import { Film, Sparkles, ExternalLink } from "lucide-react"
 import { GenreFilters } from "@/components/genre-filters"
 import { YearFilter } from "@/components/year-filter"
-import Image from "next/image"
 
 interface Movie {
   title: string
@@ -142,11 +141,11 @@ export function MovieRoulette() {
                   <div className="text-center space-y-4 animate-in fade-in duration-300">
                     {selectedMovie.poster && (
                       <div className="flex justify-center mb-4">
-                        <Image
+                       
+                        <img
                           src={selectedMovie.poster}
                           alt={`${selectedMovie.title} poster`}
-                          width={400}
-                          height={600}
+                          
                           className="rounded-lg shadow-lg max-h-[400px] object-cover"
                         />
                       </div>
