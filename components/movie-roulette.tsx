@@ -42,7 +42,7 @@ export function MovieRoulette() {
   const [selectedYears, setSelectedYears] = useState<number[]>([])
   const [errors, setErrors] = useState<{genre: string; year: string;}>({genre: '', year: ''})
   const currentYear = new Date().getFullYear()
-  const startYear = currentYear - 5
+  const startYear = 1950
   const availableYears = Array.from({ length: currentYear - startYear + 1 }, (_, i) => currentYear - i)
 
   const handleSpin = async () => {
