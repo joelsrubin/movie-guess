@@ -1,27 +1,28 @@
-"use client";
+"use client"
 
-import { ExternalLink, Film, ListVideo, Loader2, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
-import { GenreFilters } from "@/components/genre-filters";
-import { QueueModal } from "@/components/queue-modal";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { YearFilter } from "@/components/year-filter";
-import Header from "./header";
+import { Film, ListVideo, Loader2, Sparkles } from "lucide-react"
+import { useEffect, useState } from "react"
+import { GenreFilters } from "@/components/genre-filters"
+import { QueueModal } from "@/components/queue-modal"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { YearFilter } from "@/components/year-filter"
+import Header from "./header"
+import { ButtonGroup } from "./ui/button-group"
 
 interface Movie {
-	title: string;
-	year: number;
-	genres: string[];
-	id: number;
-	poster: string;
-	imdb_id: string;
+	title: string
+	year: number
+	genres: string[]
+	id: number
+	poster: string
+	imdb_id: string
 }
 
-const API_KEY = "57f535f358393665753c938201a145cb";
-const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
-const QUEUE_STORAGE_KEY = "movie-roulette-queue";
+const API_KEY = "57f535f358393665753c938201a145cb"
+const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
+const QUEUE_STORAGE_KEY = "movie-roulette-queue"
 
 const genreMap: Record<string, number> = {
 	Action: 28,
@@ -37,94 +38,89 @@ const genreMap: Record<string, number> = {
 	Romance: 10749,
 	"Sci-Fi": 878,
 	Thriller: 53,
-};
+}
 
 export function MovieRoulette() {
-	const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-	const [isSpinning, setIsSpinning] = useState(false);
-	const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-	const [selectedYears, setSelectedYears] = useState<number[]>([]);
+	const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
+	const [isSpinning, setIsSpinning] = useState(false)
+	const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+	const [selectedYears, setSelectedYears] = useState<number[]>([])
 	const [errors, setErrors] = useState<{ genre: string; year: string }>({
 		genre: "",
 		year: "",
-	});
-	const [queue, setQueue] = useState<Movie[]>([]);
-	const [isLoadingQueue, setIsLoadingQueue] = useState(true);
+	})
+	const [queue, setQueue] = useState<Movie[]>([])
+	const [isLoadingQueue, setIsLoadingQueue] = useState(true)
 
-	const currentYear = new Date().getFullYear();
-	const startYear = 1950;
+	const currentYear = new Date().getFullYear()
+	const startYear = 1950
 	const availableYears = Array.from(
 		{ length: currentYear - startYear + 1 },
 		(_, i) => currentYear - i,
-	);
+	)
 
 	useEffect(() => {
 		const loadQueue = () => {
 			try {
-				const stored = localStorage.getItem(QUEUE_STORAGE_KEY);
+				const stored = localStorage.getItem(QUEUE_STORAGE_KEY)
 				if (stored) {
-					setQueue(JSON.parse(stored));
+					setQueue(JSON.parse(stored))
 				}
 			} catch (error) {
-				console.error("Failed to load queue from localStorage:", error);
+				console.error("Failed to load queue from localStorage:", error)
 			} finally {
-				setIsLoadingQueue(false);
+				setIsLoadingQueue(false)
 			}
-		};
-		loadQueue();
-	}, []);
+		}
+		loadQueue()
+	}, [])
 
 	const handleAddToQueue = () => {
 		if (selectedMovie && !queue.find((m) => m.id === selectedMovie.id)) {
-			const updated = [...queue, selectedMovie];
-			setQueue(updated);
-			localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(updated));
+			const updated = [...queue, selectedMovie]
+			setQueue(updated)
+			localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(updated))
 		}
-	};
+	}
 
 	const handleRemoveFromQueue = (movieId: number) => {
-		const updated = queue.filter((m) => m.id !== movieId);
-		setQueue(updated);
-		localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(updated));
-	};
+		const updated = queue.filter((m) => m.id !== movieId)
+		setQueue(updated)
+		localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(updated))
+	}
 
 	const handleSpin = async () => {
 		if (selectedGenres.length === 0 || selectedYears.length === 0) {
 			setErrors({
-				genre:
-					selectedGenres.length === 0 ? "Please select at least one genre" : "",
-				year:
-					selectedYears.length === 0 ? "Please select at least one year" : "",
-			});
-			return;
+				genre: selectedGenres.length === 0 ? "Please select at least one genre" : "",
+				year: selectedYears.length === 0 ? "Please select at least one year" : "",
+			})
+			return
 		}
 
-		setIsSpinning(true);
-		setSelectedMovie(null);
+		setIsSpinning(true)
+		setSelectedMovie(null)
 
-		const randomGenre =
-			selectedGenres[Math.floor(Math.random() * selectedGenres.length)];
-		const randomYear =
-			selectedYears[Math.floor(Math.random() * selectedYears.length)];
-		const genreId = genreMap[randomGenre];
+		const randomGenre = selectedGenres[Math.floor(Math.random() * selectedGenres.length)]
+		const randomYear = selectedYears[Math.floor(Math.random() * selectedYears.length)]
+		const genreId = genreMap[randomGenre]
 
 		try {
 			const response = await fetch(
 				`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&primary_release_year=${randomYear}&sort_by=popularity.desc`,
-			);
-			const data = await response.json();
+			)
+			const data = await response.json()
 
 			if (data.results && data.results.length > 0) {
-				const randomMovie =
-					data.results[Math.floor(Math.random() * data.results.length)];
+				const randomMovie = data.results[Math.floor(Math.random() * data.results.length)]
 
 				const detailResponse = await fetch(
 					`https://api.themoviedb.org/3/movie/${randomMovie.id}?api_key=${API_KEY}`,
-				);
-				const detailData = await detailResponse.json();
-				console.log({ detailData });
+				)
+				const detailData = await detailResponse.json()
+				console.log({ detailData })
 				if (detailData.id) {
-					let counter = 0;
+					let counter = 0
 					const interval = setInterval(() => {
 						if (counter < 15) {
 							setSelectedMovie({
@@ -135,39 +131,37 @@ export function MovieRoulette() {
 									: [],
 								id: detailData.id,
 								imdb_id: detailData.imdb_id,
-								poster: detailData.poster_path
-									? `${TMDB_IMAGE_BASE}${detailData.poster_path}`
-									: "",
-							});
-							counter++;
+								poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
+							})
+							counter++
 						} else {
-							clearInterval(interval);
-							setIsSpinning(false);
+							clearInterval(interval)
+							setIsSpinning(false)
 						}
-					}, 100);
+					}, 100)
 				} else {
-					setIsSpinning(false);
+					setIsSpinning(false)
 					setErrors({
 						genre: "",
 						year: "No movie found with the selected filters",
-					});
+					})
 				}
 			} else {
-				setIsSpinning(false);
+				setIsSpinning(false)
 				setErrors({
 					genre: "",
 					year: "No movies found with the selected filters. Try different combinations.",
-				});
+				})
 			}
 		} catch (error) {
-			console.error("Failed to fetch movie:", error);
-			setIsSpinning(false);
+			console.error("Failed to fetch movie:", error)
+			setIsSpinning(false)
 			setErrors({
 				genre: "",
 				year: "Failed to fetch movie. Please try again.",
-			});
+			})
 		}
-	};
+	}
 
 	return (
 		<>
@@ -184,9 +178,7 @@ export function MovieRoulette() {
 									<Loader2 className="ml-2 w-4 h-4 animate-spin text-muted-foreground" />
 								) : (
 									queue.length > 0 && (
-										<Badge className="ml-2 px-2 py-0.5 text-xs">
-											{queue.length}
-										</Badge>
+										<Badge className="ml-2 px-2 py-0.5 text-xs">{queue.length}</Badge>
 									)
 								)}
 							</Button>
@@ -203,9 +195,7 @@ export function MovieRoulette() {
 							selectedGenres={selectedGenres}
 							onGenresChange={setSelectedGenres}
 						/>
-						{errors.genre && (
-							<p className="text-red-500 text-sm mt-2">{errors.genre}</p>
-						)}
+						{errors.genre && <p className="text-red-500 text-sm mt-2">{errors.genre}</p>}
 
 						{/* Year Filter */}
 						<YearFilter
@@ -214,106 +204,84 @@ export function MovieRoulette() {
 							selectedYears={selectedYears}
 							onYearsChange={setSelectedYears}
 						/>
-						{errors.year && (
-							<p className="text-red-500 text-sm mt-2">{errors.year}</p>
-						)}
+						{errors.year && <p className="text-red-500 text-sm mt-2">{errors.year}</p>}
 
 						{/* Movie Display Card */}
-            <div className="flex justify-center items-center">
-						<Card className="w-full max-w-sm md:max-w-lg" >
-							<div className="space-y-8">
-								<div className="min-h-[200px] flex items-center justify-center">
-									{selectedMovie ? (
-										<div className="text-center space-y-4 animate-in fade-in duration-300">
-											{selectedMovie.poster && (
-												<div className="flex justify-center mb-4">
-                          	<a
-													href={`https://www.imdb.com/title/${selectedMovie.imdb_id}`}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="inline-flex items-center gap-2 text-primary hover:underline"
-												>
-													<img
-														src={selectedMovie.poster}
-														alt={`${selectedMovie.title} poster`}
-														className="rounded-lg shadow-lg max-h-[400px] object-cover"
-													/>
-                          </a>
+						<div className="flex justify-center items-center">
+							<Card className="w-full max-w-sm md:max-w-lg">
+								<div className="space-y-8">
+									<div className="min-h-[200px] flex items-center justify-center">
+										{selectedMovie ? (
+											<div className="text-center space-y-4 animate-in fade-in duration-300">
+												{selectedMovie.poster && (
+													<div className="flex justify-center mb-4">
+														<a
+															href={`https://www.imdb.com/title/${selectedMovie.imdb_id}`}
+															target="_blank"
+															rel="noopener noreferrer"
+															className="inline-flex items-center gap-2 text-primary hover:underline"
+														>
+															<img
+																src={selectedMovie.poster}
+																alt={`${selectedMovie.title} poster`}
+																className="rounded-lg shadow-lg max-h-[400px] object-cover"
+															/>
+														</a>
+													</div>
+												)}
+												<h2 className="text-3xl md:text-5xl font-bold text-balance">
+													{selectedMovie.title}
+												</h2>
+												<p className="text-xl md:text-2xl text-muted-foreground">
+													{selectedMovie.year}
+												</p>
+												<div className="flex flex-wrap gap-2 justify-center">
+													{selectedMovie.genres.map((genre) => (
+														<Badge key={genre} variant="secondary" className="text-sm px-3 py-1">
+															{genre}
+														</Badge>
+													))}
 												</div>
-												
-											)}
-											<h2 className="text-3xl md:text-5xl font-bold text-balance">
-												{selectedMovie.title}
-											</h2>
-											<p className="text-xl md:text-2xl text-muted-foreground">
-												{selectedMovie.year}
-											</p>
-											<div className="flex flex-wrap gap-2 justify-center">
-												{selectedMovie.genres.map((genre) => (
-													<Badge
-														key={genre}
-														variant="secondary"
-														className="text-sm px-3 py-1"
-													>
-														{genre}
-													</Badge>
-												))}
 											</div>
-											<div className="flex flex-wrap gap-4 justify-center items-center">
-											
-												
-												<Button
-													onClick={handleAddToQueue}
-													disabled={queue.some(
-														(m) => m.id === selectedMovie.id,
-													)}
-												>
-													{queue.some((m) => m.id === selectedMovie.id)
-														? "Added to Queue"
-														: "Add to Queue"}
-												</Button>
+										) : (
+											<div className="text-center space-y-4">
+												<Film className="w-20 h-20 mx-auto text-muted-foreground/30" />
+												<p className="text-xl text-muted-foreground">
+													{selectedGenres.length > 0 && selectedYears.length > 0
+														? "Ready to spin with your selected filters!"
+														: "Select at least one genre and one year to start"}
+												</p>
 											</div>
-										</div>
-									) : (
-										<div className="text-center space-y-4">
-											<Film className="w-20 h-20 mx-auto text-muted-foreground/30" />
-											<p className="text-xl text-muted-foreground">
-												{selectedGenres.length > 0 && selectedYears.length > 0
-													? "Ready to spin with your selected filters!"
-													: "Select at least one genre and one year to start"}
-											</p>
-										</div>
-									)}
-								</div>
+										)}
+									</div>
 
-								{/* Spin Button */}
-								<div className="flex justify-center">
-									<Button
-										size="lg"
-										onClick={handleSpin}
-										disabled={isSpinning}
-										className="transition-all duration-200"
-									>
-										<Sparkles
-											className={`w-5 h-5 mr-2 ${isSpinning ? "animate-spin" : ""}`}
-										/>
-										{isSpinning ? "Spinning..." : "Spin the Roulette"}
-									</Button>
+									{/* Spin Button */}
+									<div className="flex justify-center">
+										<ButtonGroup>
+											<Button
+												onClick={handleAddToQueue}
+												disabled={!selectedMovie || queue.some((m) => m.id === selectedMovie?.id)}
+											>
+												{queue.some((m) => m.id === selectedMovie?.id)
+													? "Added to Queue"
+													: "Add to Queue"}
+											</Button>
+											<Button variant="outline" onClick={handleSpin} disabled={isSpinning}>
+												<Sparkles className={`w-5 h-5 mr-2 ${isSpinning ? "animate-spin" : ""}`} />
+												{isSpinning ? "Spinning..." : "Spin the Roulette"}
+											</Button>
+										</ButtonGroup>
+									</div>
 								</div>
-							</div>
-						</Card>
-</div>
+							</Card>
+						</div>
 						{/* Info Section */}
 						<div className="text-center text-sm text-muted-foreground">
 							<p>
 								{selectedGenres.length > 0 || selectedYears.length > 0
 									? `Filtering by: ${[
-											selectedGenres.length > 0
-												? `Genres: ${selectedGenres.join(", ")}`
-												: "",
-											selectedYears.length > 0
-												? `Years: ${selectedYears.join(", ")}`
-												: "",
+											selectedGenres.length > 0 ? `Genres: ${selectedGenres.join(", ")}` : "",
+											selectedYears.length > 0 ? `Years: ${selectedYears.join(", ")}` : "",
 										]
 											.filter(Boolean)
 											.join(" | ")}`
@@ -324,5 +292,5 @@ export function MovieRoulette() {
 				</div>
 			</div>
 		</>
-	);
+	)
 }
