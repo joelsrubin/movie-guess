@@ -53,7 +53,7 @@ export function MovieRoulette() {
 	const [isLoadingQueue, setIsLoadingQueue] = useState(true)
 
 	const currentYear = new Date().getFullYear()
-	const startYear = 1950
+	const startYear = 1940
 	const availableYears = Array.from(
 		{ length: currentYear - startYear + 1 },
 		(_, i) => currentYear - i,
@@ -102,7 +102,6 @@ export function MovieRoulette() {
 		}
 
 		setIsSpinning(true)
-		// setSelectedMovie(null)
 
 		const randomGenre =
 			overrides.genre || selectedGenres[Math.floor(Math.random() * selectedGenres.length)]
@@ -250,16 +249,17 @@ export function MovieRoulette() {
 												variant="outline"
 												onClick={() => handleSpin({})}
 												disabled={isSpinning}
-												className="min-w-[166px]"
 											>
 												<Sparkles className={`size-5 ${isSpinning ? "animate-spin" : ""}`} />
 												{isSpinning ? "Spinning..." : "Spin the Roulette"}
 											</Button>
-											<Button variant="outline" onClick={handleRandom}>
-												<PartyPopper className="size-5" />
-												Random
-											</Button>
 										</ButtonGroup>
+									</div>
+									<div className="flex justify-center">
+										<Button variant="outline" onClick={handleRandom}>
+											<PartyPopper className="size-5" />
+											Random
+										</Button>
 									</div>
 								</div>
 							</Card>
