@@ -146,6 +146,7 @@ export function MovieRoulette() {
 	}
 
 	const handleRandom = () => {
+		setErrors({ genre: "", year: "" })
 		const randomGenre = allGenres[Math.floor(Math.random() * allGenres.length)]
 		setSelectedGenres([randomGenre])
 		const randomYear = availableYears[Math.floor(Math.random() * availableYears.length)]
