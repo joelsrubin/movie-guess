@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Film, Sparkles, ExternalLink } from "lucide-react"
+import { Film, Sparkles, ExternalLink, ListVideo, Loader2 } from "lucide-react"
 import { GenreFilters } from "@/components/genre-filters"
 import { YearFilter } from "@/components/year-filter"
+import { QueueModal } from "@/components/queue-modal"
+import Header from "./header"
 
 interface Movie {
   title: string
@@ -18,6 +20,7 @@ interface Movie {
 
 const API_KEY = "57f535f358393665753c938201a145cb"
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
+const QUEUE_STORAGE_KEY = "movie-roulette-queue"
 
 const genreMap: Record<string, number> = {
   "Action": 28,
@@ -41,9 +44,48 @@ export function MovieRoulette() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedYears, setSelectedYears] = useState<number[]>([])
   const [errors, setErrors] = useState<{genre: string; year: string;}>({genre: '', year: ''})
+  const [queue, setQueue] = useState<Movie[]>([])
+  const [isLoadingQueue, setIsLoadingQueue] = useState(true)
+
   const currentYear = new Date().getFullYear()
   const startYear = 1950
   const availableYears = Array.from({ length: currentYear - startYear + 1 }, (_, i) => currentYear - i)
+
+  useEffect(() => {
+    const loadQueue = () => {
+      try {
+        const stored = localStorage.getItem(QUEUE_STORAGE_KEY)
+        if (stored) {
+          setQueue(JSON.parse(stored))
+        }
+      } catch (error) {
+        console.error("Failed to load queue from localStorage:", error)
+      } finally {
+        setIsLoadingQueue(false)
+      }
+    }
+    loadQueue()
+  }, [])
+
+  useEffect(() => {
+    if (!isLoadingQueue) {
+      try {
+        localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(queue))
+      } catch (error) {
+        console.error("Failed to save queue to localStorage:", error)
+      }
+    }
+  }, [queue, isLoadingQueue])
+
+  const handleAddToQueue = () => {
+    if (selectedMovie && !queue.find(m => m.id === selectedMovie.id)) {
+      setQueue([...queue, selectedMovie])
+    }
+  }
+
+  const handleRemoveFromQueue = (movieId: number) => {
+    setQueue(queue.filter(m => m.id !== movieId))
+  }
 
   const handleSpin = async () => {
     if (selectedGenres.length === 0 || selectedYears.length === 0) {
@@ -105,20 +147,29 @@ export function MovieRoulette() {
   }
 
   return (
+    <>
+    <Header queueButton={
+      <QueueModal 
+        movies={queue} 
+        onRemove={handleRemoveFromQueue}
+        trigger={
+          <Button variant="outline" className="relative">
+            <ListVideo className="w-5 h-5 mr-2" />
+            Queue
+            {isLoadingQueue ? (
+              <Loader2 className="ml-2 w-4 h-4 animate-spin text-muted-foreground" />
+            ) : queue.length > 0 && (
+              <Badge className="ml-2 px-2 py-0.5 text-xs">
+                {queue.length}
+              </Badge>
+            )}
+          </Button>
+        }
+      />
+    } />
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 md:py-16">
+      <div className="container mx-auto px-4 py-8 md:py-8">
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* Header */}
-          <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-3">
-              <Film className="w-10 h-10 text-accent" />
-              <h1 className="text-4xl md:text-6xl font-bold text-balance">Movie Roulette</h1>
-            </div>
-            <p className="text-lg md:text-xl text-muted-foreground text-balance">
-              Can't decide what to watch? Let fate choose your next movie adventure.
-            </p>
-          </div>
-
           {/* Genre Filters */}
           <GenreFilters 
             setErrors={setErrors}
@@ -159,14 +210,22 @@ export function MovieRoulette() {
                         </Badge>
                       ))}
                     </div>
+                    <div className="flex flex-wrap gap-4 justify-center items-center">
                     <a
                       href={`https://www.themoviedb.org/movie/${selectedMovie.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-primary hover:underline mt-4"
+                      className="inline-flex items-center gap-2 text-primary hover:underline"
                     >
                       View on TMDB <ExternalLink className="w-4 h-4" />
                     </a>
+                    <Button 
+                      onClick={handleAddToQueue}
+                      disabled={queue.some(m => m.id === selectedMovie.id)}
+                    >
+                      {queue.some(m => m.id === selectedMovie.id) ? "Added to Queue" : "Add to Queue"}
+                    </Button>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center space-y-4">
@@ -211,5 +270,6 @@ export function MovieRoulette() {
         </div>
       </div>
     </div>
+    </>
   )
 }
