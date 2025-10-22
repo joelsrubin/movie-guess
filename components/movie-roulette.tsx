@@ -251,7 +251,7 @@ export function MovieRoulette() {
 												disabled={isSpinning}
 											>
 												<Sparkles className={`size-5 ${isSpinning ? "animate-spin" : ""}`} />
-												{isSpinning ? "Spinning..." : "Spin the Roulette"}
+												{isSpinning ? "Spinning..." : "Spin the Wheel"}
 											</Button>
 										</ButtonGroup>
 									</div>
