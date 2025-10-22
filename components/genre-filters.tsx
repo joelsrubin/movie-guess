@@ -69,10 +69,10 @@ export function GenreFilters({
 									<Badge
 										key={genre}
 										variant={isSelected ? "default" : "outline"}
-										className={`cursor-pointer px-4 py-2 text-sm transition-all hover:scale-105 ${
+										className={`cursor-pointer px-4 py-2 text-sm transition-all ${
 											isSelected
-												? "bg-primary text-primary-foreground hover:bg-primary/90"
-												: "hover:bg-secondary"
+												? "bg-primary text-primary-foreground"
+												: ""
 										}`}
 										onClick={() => toggleGenre(genre)}
 									>

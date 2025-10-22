@@ -117,12 +117,12 @@ export function YearFilter({
 										<div key={decade} className="flex items-center gap-2">
 											<Badge
 												variant={isFullySelected ? "default" : "outline"}
-												className={`cursor-pointer px-4 py-2 text-sm transition-all hover:scale-105 ${
+												className={`cursor-pointer px-4 py-2 text-sm ${
 													isFullySelected
-														? "bg-primary text-primary-foreground hover:bg-primary/90"
+														? "bg-primary text-primary-foreground"
 														: isPartiallySelected
-															? "bg-primary/50 text-primary-foreground hover:bg-primary/60"
-															: "hover:bg-secondary"
+															? "bg-primary/50 text-primary-foreground"
+															: ""
 												}`}
 												onClick={() => toggleDecade(decade)}
 											>
