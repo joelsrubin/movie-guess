@@ -181,7 +181,7 @@ export function MovieRoulette() {
 						{/* Genre Filters */}
 
 						{/* Movie Display Card */}
-						<div className="flex justify-center items-center">
+						<div className="flex justify-center items-center pt-4">
 							<Card className="w-full max-w-sm md:max-w-lg">
 								<div className="space-y-8">
 									<div className="min-h-[200px] flex items-center justify-center">
@@ -265,7 +265,7 @@ export function MovieRoulette() {
 							</Card>
 						</div>
 						{/* Info Section */}
-						<div className="text-center text-sm text-muted-foreground">
+						<div className="text-center text-sm text-muted-foreground pt-4">
 							<p>
 								{selectedGenres.length > 0 || selectedYears.length > 0
 									? `Filtering by: ${[
