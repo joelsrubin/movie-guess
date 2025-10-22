@@ -1,60 +1,49 @@
-"use client";
+"use client"
 
-import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react"
+import { useState } from "react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog"
 
 interface Movie {
-	title: string;
-	year: number;
-	genres: string[];
-	id: number;
-	poster: string;
+	title: string
+	year: number
+	genres: string[]
+	id: number
+	poster: string
 }
 
 interface QueueModalProps {
-	movies: Movie[];
-	trigger: React.ReactNode;
-	onRemove: (movieId: number) => void;
-	isLoading?: boolean;
+	movies: Movie[]
+	trigger: React.ReactNode
+	onRemove: (movieId: number) => void
+	isLoading?: boolean
 }
 
-export function QueueModal({
-	movies,
-	trigger,
-	onRemove,
-	isLoading = false,
-}: QueueModalProps) {
-	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 5;
-	const totalPages = Math.ceil(movies.length / itemsPerPage);
+export function QueueModal({ movies, trigger, onRemove, isLoading = false }: QueueModalProps) {
+	const [currentPage, setCurrentPage] = useState(1)
+	const itemsPerPage = 5
+	const totalPages = Math.ceil(movies.length / itemsPerPage)
 
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = startIndex + itemsPerPage;
-	const currentMovies = movies.slice(startIndex, endIndex);
+	const startIndex = (currentPage - 1) * itemsPerPage
+	const endIndex = startIndex + itemsPerPage
+	const currentMovies = movies.slice(startIndex, endIndex)
 
 	const handlePrevPage = () => {
-		setCurrentPage((prev) => Math.max(1, prev - 1));
-	};
+		setCurrentPage((prev) => Math.max(1, prev - 1))
+	}
 
 	const handleNextPage = () => {
-		setCurrentPage((prev) => Math.min(totalPages, prev + 1));
-	};
+		setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+	}
 
 	return (
 		<Dialog>
@@ -69,13 +58,9 @@ export function QueueModal({
 				<div className="flex-1 overflow-y-auto">
 					<div className="grid gap-4">
 						{isLoading ? (
-							<p className="text-muted-foreground text-center py-8">
-								Loading queue...
-							</p>
+							<p className="text-muted-foreground text-center py-8">Loading queue...</p>
 						) : movies.length === 0 ? (
-							<p className="text-muted-foreground text-center py-8">
-								No movies in queue
-							</p>
+							<p className="text-muted-foreground text-center py-8">No movies in queue</p>
 						) : (
 							currentMovies.map((movie) => (
 								<Card key={movie.id}>
@@ -143,5 +128,5 @@ export function QueueModal({
 				)}
 			</DialogContent>
 		</Dialog>
-	);
+	)
 }
