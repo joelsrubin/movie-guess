@@ -220,19 +220,27 @@ export function MovieRoulette() {
 
 						{/* Movie Display Card */}
             <div className="flex justify-center items-center">
-						<Card className="w-full max-w-sm" >
+						<Card className="w-full max-w-sm md:max-w-lg" >
 							<div className="space-y-8">
 								<div className="min-h-[200px] flex items-center justify-center">
 									{selectedMovie ? (
 										<div className="text-center space-y-4 animate-in fade-in duration-300">
 											{selectedMovie.poster && (
 												<div className="flex justify-center mb-4">
+                          	<a
+													href={`https://www.imdb.com/title/${selectedMovie.imdb_id}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="inline-flex items-center gap-2 text-primary hover:underline"
+												>
 													<img
 														src={selectedMovie.poster}
 														alt={`${selectedMovie.title} poster`}
 														className="rounded-lg shadow-lg max-h-[400px] object-cover"
 													/>
+                          </a>
 												</div>
+												
 											)}
 											<h2 className="text-3xl md:text-5xl font-bold text-balance">
 												{selectedMovie.title}
@@ -252,14 +260,8 @@ export function MovieRoulette() {
 												))}
 											</div>
 											<div className="flex flex-wrap gap-4 justify-center items-center">
-												<a
-													href={`https://www.imdb.com/title/${selectedMovie.imdb_id}`}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="inline-flex items-center gap-2 text-primary hover:underline"
-												>
-													View on IMDB <ExternalLink className="w-4 h-4" />
-												</a>
+											
+												
 												<Button
 													onClick={handleAddToQueue}
 													disabled={queue.some(
