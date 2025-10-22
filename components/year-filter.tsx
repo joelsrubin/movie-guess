@@ -15,7 +15,6 @@ interface YearFilterProps {
 	availableYears: number[];
 	selectedYears: number[];
 	onYearsChange: (years: number[]) => void;
-	error: string;
 	setErrors: React.Dispatch<
 		React.SetStateAction<{ genre: string; year: string }>
 	>;
@@ -25,7 +24,6 @@ export function YearFilter({
 	availableYears,
 	selectedYears,
 	onYearsChange,
-	error,
 	setErrors,
 }: YearFilterProps) {
 	const [expandedDecade, setExpandedDecade] = useState<number | null>(null);
@@ -179,8 +177,6 @@ export function YearFilter({
 								</div>
 							)}
 						</div>
-
-						{error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>

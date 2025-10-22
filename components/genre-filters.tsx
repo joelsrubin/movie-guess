@@ -28,7 +28,6 @@ const allGenres = [
 interface GenreFiltersProps {
 	selectedGenres: string[];
 	onGenresChange: (genres: string[]) => void;
-	error: string;
 	setErrors: React.Dispatch<
 		React.SetStateAction<{ genre: string; year: string }>
 	>;
@@ -37,7 +36,6 @@ interface GenreFiltersProps {
 export function GenreFilters({
 	selectedGenres,
 	onGenresChange,
-	error,
 	setErrors,
 }: GenreFiltersProps) {
 	const toggleGenre = (genre: string) => {
@@ -89,7 +87,6 @@ export function GenreFilters({
 								/>
 							)}
 						</div>
-						{error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>

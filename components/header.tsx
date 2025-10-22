@@ -1,4 +1,5 @@
 import { Film } from "lucide-react";
+import { ModeToggle } from "./mode-toggle";
 
 interface HeaderProps {
 	queueButton?: React.ReactNode;
@@ -14,7 +15,10 @@ export default function Header({ queueButton }: HeaderProps) {
 					Movie Roulette
 				</h1>
 			</div>
+      <div className="flex items-center gap-3">
 			{queueButton && <div>{queueButton}</div>}
+      <ModeToggle />
+      </div>
 		</div>
 	);
 }
