@@ -74,24 +74,18 @@ export function MovieRoulette() {
 		loadQueue();
 	}, []);
 
-	useEffect(() => {
-		if (!isLoadingQueue) {
-			try {
-				localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(queue));
-			} catch (error) {
-				console.error("Failed to save queue to localStorage:", error);
-			}
-		}
-	}, [queue, isLoadingQueue]);
-
 	const handleAddToQueue = () => {
 		if (selectedMovie && !queue.find((m) => m.id === selectedMovie.id)) {
-			setQueue([...queue, selectedMovie]);
+			const updated = [...queue, selectedMovie];
+			setQueue(updated);
+			localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(updated));
 		}
 	};
 
 	const handleRemoveFromQueue = (movieId: number) => {
-		setQueue(queue.filter((m) => m.id !== movieId));
+		const updated = queue.filter((m) => m.id !== movieId);
+		setQueue(updated);
+		localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(updated));
 	};
 
 	const handleSpin = async () => {
