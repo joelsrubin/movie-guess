@@ -194,8 +194,8 @@ export function MovieRoulette() {
 					/>
 				}
 			/>
-			<div className="min-h-screen bg-background">
-				<div className="container mx-auto px-4 py-2">
+			<div className="container">
+				<div className="mx-auto px-4 py-2">
 					<div className="max-w-4xl mx-auto ">
 						{/* Genre Filters */}
 						<GenreFilters
@@ -219,7 +219,8 @@ export function MovieRoulette() {
 						)}
 
 						{/* Movie Display Card */}
-						<Card className="p-8 md:p-12 bg-card border-2 shadow-lg">
+            <div className="flex justify-center items-center">
+						<Card className="w-full max-w-sm" >
 							<div className="space-y-8">
 								<div className="min-h-[200px] flex items-center justify-center">
 									{selectedMovie ? (
@@ -299,7 +300,7 @@ export function MovieRoulette() {
 								</div>
 							</div>
 						</Card>
-
+</div>
 						{/* Info Section */}
 						<div className="text-center text-sm text-muted-foreground">
 							<p>
