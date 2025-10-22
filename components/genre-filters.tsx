@@ -1,15 +1,15 @@
-"use client";
+"use client"
 
-import { Trash } from "lucide-react";
+import { Trash } from "lucide-react"
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/ui/accordion"
+import { Badge } from "@/components/ui/badge"
 
-const allGenres = [
+export const allGenres = [
 	"Action",
 	"Adventure",
 	"Animation",
@@ -23,33 +23,27 @@ const allGenres = [
 	"Romance",
 	"Sci-Fi",
 	"Thriller",
-];
+]
 
 interface GenreFiltersProps {
-	selectedGenres: string[];
-	onGenresChange: (genres: string[]) => void;
-	setErrors: React.Dispatch<
-		React.SetStateAction<{ genre: string; year: string }>
-	>;
+	selectedGenres: string[]
+	onGenresChange: (genres: string[]) => void
+	setErrors: React.Dispatch<React.SetStateAction<{ genre: string; year: string }>>
 }
 
-export function GenreFilters({
-	selectedGenres,
-	onGenresChange,
-	setErrors,
-}: GenreFiltersProps) {
+export function GenreFilters({ selectedGenres, onGenresChange, setErrors }: GenreFiltersProps) {
 	const toggleGenre = (genre: string) => {
-		setErrors((prev) => ({ ...prev, genre: "" }));
+		setErrors((prev) => ({ ...prev, genre: "" }))
 		if (selectedGenres.includes(genre)) {
-			onGenresChange(selectedGenres.filter((g) => g !== genre));
+			onGenresChange(selectedGenres.filter((g) => g !== genre))
 		} else {
-			onGenresChange([...selectedGenres, genre]);
+			onGenresChange([...selectedGenres, genre])
 		}
-	};
+	}
 
 	const clearAll = () => {
-		onGenresChange([]);
-	};
+		onGenresChange([])
+	}
 
 	return (
 		<div className="space-y-4">
@@ -64,21 +58,19 @@ export function GenreFilters({
 					<AccordionContent>
 						<div className="flex flex-wrap gap-2">
 							{allGenres.map((genre) => {
-								const isSelected = selectedGenres.includes(genre);
+								const isSelected = selectedGenres.includes(genre)
 								return (
 									<Badge
 										key={genre}
 										variant={isSelected ? "default" : "outline"}
 										className={`cursor-pointer px-4 py-2 text-sm transition-all ${
-											isSelected
-												? "bg-primary text-primary-foreground"
-												: ""
+											isSelected ? "bg-primary text-primary-foreground" : ""
 										}`}
 										onClick={() => toggleGenre(genre)}
 									>
 										{genre}
 									</Badge>
-								);
+								)
 							})}
 							{selectedGenres.length > 0 && (
 								<Trash
@@ -91,5 +83,5 @@ export function GenreFilters({
 				</AccordionItem>
 			</Accordion>
 		</div>
-	);
+	)
 }

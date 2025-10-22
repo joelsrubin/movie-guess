@@ -1,8 +1,8 @@
 "use client"
 
-import { Film, ListVideo, Loader2, Sparkles } from "lucide-react"
+import { Check, Film, ListVideo, Loader2, PartyPopper, Plus, Sparkles } from "lucide-react"
 import { useEffect, useState } from "react"
-import { GenreFilters } from "@/components/genre-filters"
+import { allGenres, GenreFilters } from "@/components/genre-filters"
 import { QueueModal } from "@/components/queue-modal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -89,8 +89,11 @@ export function MovieRoulette() {
 		localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(updated))
 	}
 
-	const handleSpin = async () => {
-		if (selectedGenres.length === 0 || selectedYears.length === 0) {
+	const handleSpin = async (overrides: { genre?: string; year?: number } = {}) => {
+		if (
+			(!overrides.genre && selectedGenres.length === 0) ||
+			(!overrides.year && selectedYears.length === 0)
+		) {
 			setErrors({
 				genre: selectedGenres.length === 0 ? "Please select at least one genre" : "",
 				year: selectedYears.length === 0 ? "Please select at least one year" : "",
@@ -101,8 +104,10 @@ export function MovieRoulette() {
 		setIsSpinning(true)
 		// setSelectedMovie(null)
 
-		const randomGenre = selectedGenres[Math.floor(Math.random() * selectedGenres.length)]
-		const randomYear = selectedYears[Math.floor(Math.random() * selectedYears.length)]
+		const randomGenre =
+			overrides.genre || selectedGenres[Math.floor(Math.random() * selectedGenres.length)]
+		const randomYear =
+			overrides.year || selectedYears[Math.floor(Math.random() * selectedYears.length)]
 		const genreId = genreMap[randomGenre]
 
 		try {
@@ -140,7 +145,14 @@ export function MovieRoulette() {
 			})
 		}
 	}
-	console.log(selectedMovie?.poster)
+
+	const handleRandom = () => {
+		const randomGenre = allGenres[Math.floor(Math.random() * allGenres.length)]
+		setSelectedGenres([randomGenre])
+		const randomYear = availableYears[Math.floor(Math.random() * availableYears.length)]
+		setSelectedYears([randomYear])
+		handleSpin({ genre: randomGenre, year: randomYear })
+	}
 	return (
 		<>
 			<Header
@@ -225,13 +237,27 @@ export function MovieRoulette() {
 												onClick={handleAddToQueue}
 												disabled={!selectedMovie || queue.some((m) => m.id === selectedMovie?.id)}
 											>
+												{queue.some((m) => m.id === selectedMovie?.id) ? (
+													<Check className="size-5" />
+												) : (
+													<Plus className="size-5" />
+												)}
 												{queue.some((m) => m.id === selectedMovie?.id)
 													? "Added to Queue"
 													: "Add to Queue"}
 											</Button>
-											<Button variant="outline" onClick={handleSpin} disabled={isSpinning}>
-												<Sparkles className={`w-5 h-5 mr-2 ${isSpinning ? "animate-spin" : ""}`} />
+											<Button
+												variant="outline"
+												onClick={() => handleSpin({})}
+												disabled={isSpinning}
+												className="min-w-[166px]"
+											>
+												<Sparkles className={`size-5 ${isSpinning ? "animate-spin" : ""}`} />
 												{isSpinning ? "Spinning..." : "Spin the Roulette"}
+											</Button>
+											<Button variant="outline" onClick={handleRandom}>
+												<PartyPopper className="size-5" />
+												Random
 											</Button>
 										</ButtonGroup>
 									</div>
