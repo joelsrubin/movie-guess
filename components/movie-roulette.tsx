@@ -99,7 +99,7 @@ export function MovieRoulette() {
 		}
 
 		setIsSpinning(true)
-		setSelectedMovie(null)
+		// setSelectedMovie(null)
 
 		const randomGenre = selectedGenres[Math.floor(Math.random() * selectedGenres.length)]
 		const randomYear = selectedYears[Math.floor(Math.random() * selectedYears.length)]
@@ -120,41 +120,19 @@ export function MovieRoulette() {
 				const detailData = await detailResponse.json()
 				console.log({ detailData })
 				if (detailData.id) {
-					let counter = 0
-					const interval = setInterval(() => {
-						if (counter < 15) {
-							setSelectedMovie({
-								title: detailData.title,
-								year: new Date(detailData.release_date).getFullYear(),
-								genres: detailData.genres
-									? detailData.genres.map((g: { name: string }) => g.name)
-									: [],
-								id: detailData.id,
-								imdb_id: detailData.imdb_id,
-								poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
-							})
-							counter++
-						} else {
-							clearInterval(interval)
-							setIsSpinning(false)
-						}
-					}, 100)
-				} else {
-					setIsSpinning(false)
-					setErrors({
-						genre: "",
-						year: "No movie found with the selected filters",
+					setSelectedMovie({
+						title: detailData.title,
+						year: new Date(detailData.release_date).getFullYear(),
+						genres: detailData.genres ? detailData.genres.map((g: { name: string }) => g.name) : [],
+						id: detailData.id,
+						imdb_id: detailData.imdb_id,
+						poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
 					})
+					setIsSpinning(false)
 				}
-			} else {
-				setIsSpinning(false)
-				setErrors({
-					genre: "",
-					year: "No movies found with the selected filters. Try different combinations.",
-				})
 			}
-		} catch (error) {
-			console.error("Failed to fetch movie:", error)
+		} catch (_error) {
+			console.error("Failed to fetch movie:", _error)
 			setIsSpinning(false)
 			setErrors({
 				genre: "",
@@ -162,7 +140,7 @@ export function MovieRoulette() {
 			})
 		}
 	}
-
+	console.log(selectedMovie?.poster)
 	return (
 		<>
 			<Header
@@ -171,7 +149,7 @@ export function MovieRoulette() {
 						movies={queue}
 						onRemove={handleRemoveFromQueue}
 						trigger={
-							<Button variant="outline" className="relative">
+							<Button variant="outline">
 								<ListVideo className="w-5 h-5 mr-2" />
 								Queue
 								{isLoadingQueue ? (
@@ -190,21 +168,6 @@ export function MovieRoulette() {
 				<div className="mx-auto px-4 py-2">
 					<div className="max-w-4xl mx-auto ">
 						{/* Genre Filters */}
-						<GenreFilters
-							setErrors={setErrors}
-							selectedGenres={selectedGenres}
-							onGenresChange={setSelectedGenres}
-						/>
-						{errors.genre && <p className="text-red-500 text-sm mt-2">{errors.genre}</p>}
-
-						{/* Year Filter */}
-						<YearFilter
-							setErrors={setErrors}
-							availableYears={availableYears}
-							selectedYears={selectedYears}
-							onYearsChange={setSelectedYears}
-						/>
-						{errors.year && <p className="text-red-500 text-sm mt-2">{errors.year}</p>}
 
 						{/* Movie Display Card */}
 						<div className="flex justify-center items-center">
@@ -224,7 +187,7 @@ export function MovieRoulette() {
 															<img
 																src={selectedMovie.poster}
 																alt={`${selectedMovie.title} poster`}
-																className="rounded-lg shadow-lg max-h-[400px] object-cover"
+																className={`rounded-lg shadow-lg max-h-[400px] object-cover transition-all ${isSpinning ? "blur-sm" : ""}`}
 															/>
 														</a>
 													</div>
@@ -288,6 +251,21 @@ export function MovieRoulette() {
 									: "Select genres or years above to filter your movie selection"}
 							</p>
 						</div>
+						<GenreFilters
+							setErrors={setErrors}
+							selectedGenres={selectedGenres}
+							onGenresChange={setSelectedGenres}
+						/>
+						{errors.genre && <p className="text-red-500 text-sm mt-2">{errors.genre}</p>}
+
+						{/* Year Filter */}
+						<YearFilter
+							setErrors={setErrors}
+							availableYears={availableYears}
+							selectedYears={selectedYears}
+							onYearsChange={setSelectedYears}
+						/>
+						{errors.year && <p className="text-red-500 text-sm mt-2">{errors.year}</p>}
 					</div>
 				</div>
 			</div>
