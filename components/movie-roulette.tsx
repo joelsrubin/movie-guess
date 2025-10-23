@@ -128,8 +128,10 @@ export function MovieRoulette() {
 				params.append("with_genres", genreId.toString())
 			}
 
-			if (randomYear) {
-				params.append("primary_release_year", randomYear.toString())
+			const yearToSearch =
+				randomYear || availableYears[Math.floor(Math.random() * availableYears.length)]
+			if (yearToSearch) {
+				params.append("primary_release_year", yearToSearch.toString())
 			}
 
 			const response = await fetch(
