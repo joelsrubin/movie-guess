@@ -1,6 +1,7 @@
 "use client"
 
 import { Check, Film, ListVideo, Loader2, PartyPopper, Plus, Sparkles } from "lucide-react"
+import Image from "next/image"
 import { useEffect, useState } from "react"
 import { allGenres, GenreFilters } from "@/components/genre-filters"
 import { QueueModal } from "@/components/queue-modal"
@@ -196,12 +197,14 @@ export function MovieRoulette() {
 															rel="noopener noreferrer"
 															className="inline-flex items-center gap-2 text-primary hover:underline"
 														>
-															<img
+															<Image
+																width={500}
+																height={750}
 																onError={() => setIsSpinning(false)}
 																onLoad={() => setIsSpinning(false)}
 																src={selectedMovie.poster}
 																alt={`${selectedMovie.title} poster`}
-																className={`rounded-lg shadow-lg max-h-[400px] object-cover transition-all ${isSpinning ? "blur-sm" : ""}`}
+																className={`rounded-lg shadow-lg max-h-[400px] object-contain transition-all ${isSpinning ? "blur-sm" : ""}`}
 															/>
 														</a>
 													</div>
