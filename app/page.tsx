@@ -3,7 +3,11 @@ import { MovieRoulette } from "@/components/movie-roulette"
 const API_KEY = "57f535f358393665753c938201a145cb"
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
 
-export default async function Home({ searchParams }: { searchParams: { movieId: string } }) {
+export default async function Home({
+	searchParams,
+}: {
+	searchParams: { [key: string]: string | string[] | undefined }
+}) {
 	const fetchMovieFromUrl = async () => {
 		if (searchParams.movieId) {
 			try {
