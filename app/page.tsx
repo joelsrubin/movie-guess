@@ -6,13 +6,13 @@ const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
 export default async function Home({
 	searchParams,
 }: {
-	searchParams: { [key: string]: string | string[] | undefined }
+	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
 	const fetchMovieFromUrl = async () => {
-		if (searchParams.movieId) {
+		if ((await searchParams).movieId) {
 			try {
 				const detailResponse = await fetch(
-					`https://api.themoviedb.org/3/movie/${searchParams.movieId}?api_key=${API_KEY}`,
+					`https://api.themoviedb.org/3/movie/${(await searchParams).movieId}?api_key=${API_KEY}`,
 				)
 				const detailData = await detailResponse.json()
 				if (detailData.id) {
