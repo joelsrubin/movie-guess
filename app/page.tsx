@@ -42,9 +42,18 @@ export async function generateMetadata({
 			console.error("Failed to fetch movie metadata:", error)
 		}
 	}
+	const defaultImageUrl = "/clapper.png"
 	return {
 		title: "Movie Roulette",
 		description: "Take it for a spin",
+
+		openGraph: {
+			images: [defaultImageUrl],
+		},
+		twitter: {
+			card: "summary_large_image",
+			images: [defaultImageUrl],
+		},
 	}
 }
 
