@@ -2,8 +2,8 @@
 
 import { Check, ListVideo, PartyPopper, Plus, Sparkles, Trash } from "lucide-react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
 import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryStates } from "nuqs"
+import { useEffect, useState } from "react"
 import { allGenres, GenreFilters } from "@/components/genre-filters"
 import { QueueModal } from "@/components/queue-modal"
 import { Badge } from "@/components/ui/badge"
@@ -44,8 +44,8 @@ const genreMap: Record<string, number> = {
 	Thriller: 53,
 }
 
-export function MovieRoulette() {
-	const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
+export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
+	const [selectedMovie, setSelectedMovie] = useState<Movie | null>(defaultData)
 	const [isSpinning, setIsSpinning] = useState(false)
 	const [params, setParams] = useQueryStates({
 		genres: parseAsArrayOf(parseAsString).withDefault([]),
@@ -81,34 +81,6 @@ export function MovieRoulette() {
 		}
 		loadQueue()
 	}, [])
-
-	useEffect(() => {
-		const fetchMovieFromUrl = async () => {
-			if (params.movieId && !selectedMovie) {
-				try {
-					const detailResponse = await fetch(
-						`https://api.themoviedb.org/3/movie/${params.movieId}?api_key=${API_KEY}`,
-					)
-					const detailData = await detailResponse.json()
-					if (detailData.id) {
-						setSelectedMovie({
-							title: detailData.title,
-							year: new Date(detailData.release_date).getFullYear(),
-							genres: detailData.genres
-								? detailData.genres.map((g: { name: string }) => g.name)
-								: [],
-							id: detailData.id,
-							imdb_id: detailData.imdb_id,
-							poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
-						})
-					}
-				} catch (error) {
-					console.error("Failed to fetch movie from URL:", error)
-				}
-			}
-		}
-		fetchMovieFromUrl()
-	}, [params.movieId, selectedMovie])
 
 	const handleAddToQueue = () => {
 		if (selectedMovie && !queue.find((m) => m.id === selectedMovie.id)) {
