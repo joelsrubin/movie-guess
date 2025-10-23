@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { YearFilter } from "@/components/year-filter"
 import Header from "./header"
+import { NoImage } from "./no-image"
 import { ButtonGroup } from "./ui/button-group"
 
 interface Movie {
@@ -221,7 +222,7 @@ export function MovieRoulette() {
 									<div className="min-h-[200px] flex items-center justify-center">
 										{selectedMovie ? (
 											<div className="text-center space-y-4 animate-in fade-in duration-300">
-												{selectedMovie.poster && (
+												{selectedMovie.poster ? (
 													<div className="flex justify-center pb-8">
 														<a
 															href={`https://www.imdb.com/title/${selectedMovie.imdb_id}`}
@@ -240,6 +241,8 @@ export function MovieRoulette() {
 															/>
 														</a>
 													</div>
+												) : (
+													<NoImage />
 												)}
 												<h2 className="text-3xl md:text-5xl font-bold text-balance">
 													{selectedMovie.title}
@@ -249,7 +252,7 @@ export function MovieRoulette() {
 												</p>
 												<div className="flex flex-wrap gap-2 justify-center">
 													{selectedMovie.genres.map((genre) => (
-														<Badge key={genre} variant="secondary" className="text-sm px-3 py-1">
+														<Badge key={genre} variant="outline" className="text-sm px-3 py-1">
 															{genre}
 														</Badge>
 													))}
@@ -272,6 +275,7 @@ export function MovieRoulette() {
 										<ButtonGroup>
 											<Button
 												onClick={handleAddToQueue}
+												className="min-w-[155px]"
 												disabled={!selectedMovie || queue.some((m) => m.id === selectedMovie?.id)}
 											>
 												{queue.some((m) => m.id === selectedMovie?.id) ? (
@@ -299,17 +303,18 @@ export function MovieRoulette() {
 									)}
 									<div className="flex justify-center">
 										<ButtonGroup>
-											<Button variant="outline" onClick={handleRandom}>
-												<PartyPopper className="size-5" />
-												Random
-											</Button>
 											<Button
 												disabled={selectedGenres.length === 0 && selectedYears.length === 0}
 												variant="destructive"
 												onClick={clearFilters}
+												className="min-w-[155px]"
 											>
 												<Trash className="size-5" />
 												Clear filters
+											</Button>
+											<Button className="min-w-[155px]" variant="outline" onClick={handleRandom}>
+												<PartyPopper className="size-5" />
+												Random
 											</Button>
 										</ButtonGroup>
 									</div>
