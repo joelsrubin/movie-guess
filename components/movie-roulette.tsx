@@ -1,6 +1,6 @@
 "use client"
 
-import { Check, Film, ListVideo, Loader2, PartyPopper, Plus, Sparkles } from "lucide-react"
+import { Check, Film, ListVideo, Loader2, PartyPopper, Plus, Sparkles, Trash } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { allGenres, GenreFilters } from "@/components/genre-filters"
@@ -172,6 +172,12 @@ export function MovieRoulette() {
 		}
 	}
 
+	const clearFilters = () => {
+		setSelectedGenres([])
+		setSelectedYears([])
+		setErrors({ genre: "", year: "" })
+	}
+
 	const handleRandom = () => {
 		setErrors({ genre: "", year: "" })
 		const randomGenre = allGenres[Math.floor(Math.random() * allGenres.length)]
@@ -216,7 +222,7 @@ export function MovieRoulette() {
 										{selectedMovie ? (
 											<div className="text-center space-y-4 animate-in fade-in duration-300">
 												{selectedMovie.poster && (
-													<div className="flex justify-center mb-4">
+													<div className="flex justify-center pb-8">
 														<a
 															href={`https://www.imdb.com/title/${selectedMovie.imdb_id}`}
 															target="_blank"
@@ -230,7 +236,7 @@ export function MovieRoulette() {
 																onLoad={() => setIsSpinning(false)}
 																src={selectedMovie.poster}
 																alt={`${selectedMovie.title} poster`}
-																className={`rounded-lg shadow-lg max-h-[400px] object-contain transition-all ${isSpinning ? "blur-sm" : ""}`}
+																className={` max-h-[400px] object-contain transition-all ${isSpinning ? "blur-sm" : ""}`}
 															/>
 														</a>
 													</div>
@@ -281,6 +287,7 @@ export function MovieRoulette() {
 												variant="outline"
 												onClick={() => handleSpin({})}
 												disabled={isSpinning}
+												className="min-w-[155px]"
 											>
 												<Sparkles className={`size-5 ${isSpinning ? "animate-spin" : ""}`} />
 												{isSpinning ? "Spinning..." : "Spin the Wheel"}
@@ -291,10 +298,20 @@ export function MovieRoulette() {
 										<p className="flex justify-center text-red-500 text-sm mt-2">{errors.genre}</p>
 									)}
 									<div className="flex justify-center">
-										<Button variant="outline" onClick={handleRandom}>
-											<PartyPopper className="size-5" />
-											Random
-										</Button>
+										<ButtonGroup>
+											<Button variant="outline" onClick={handleRandom}>
+												<PartyPopper className="size-5" />
+												Random
+											</Button>
+											<Button
+												disabled={selectedGenres.length === 0 && selectedYears.length === 0}
+												variant="destructive"
+												onClick={clearFilters}
+											>
+												<Trash className="size-5" />
+												Clear filters
+											</Button>
+										</ButtonGroup>
 									</div>
 								</div>
 							</Card>
@@ -325,7 +342,6 @@ export function MovieRoulette() {
 							selectedYears={selectedYears}
 							onYearsChange={setSelectedYears}
 						/>
-						{errors.year && <p className="text-red-500 text-sm mt-2">{errors.year}</p>}
 					</div>
 				</div>
 			</div>
