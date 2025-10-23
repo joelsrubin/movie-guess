@@ -1,18 +1,12 @@
 "use client"
 
-import { Trash } from "lucide-react"
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Badge } from "@/components/ui/badge"
+import { genreMap } from "@/lib/constants"
+
+import { Button } from "./ui/button"
 
 export const allGenres = [
 	"Action",
 	"Adventure",
-	"Animation",
 	"Comedy",
 	"Crime",
 	"Drama",
@@ -28,12 +22,10 @@ export const allGenres = [
 interface GenreFiltersProps {
 	selectedGenres: string[]
 	onGenresChange: (genres: string[]) => void
-	setErrors: React.Dispatch<React.SetStateAction<{ genre: string; year: string }>>
 }
 
-export function GenreFilters({ selectedGenres, onGenresChange, setErrors }: GenreFiltersProps) {
+export function GenreFilters({ selectedGenres, onGenresChange }: GenreFiltersProps) {
 	const toggleGenre = (genre: string) => {
-		setErrors((prev) => ({ ...prev, genre: "" }))
 		if (selectedGenres.includes(genre)) {
 			onGenresChange(selectedGenres.filter((g) => g !== genre))
 		} else {
@@ -41,47 +33,22 @@ export function GenreFilters({ selectedGenres, onGenresChange, setErrors }: Genr
 		}
 	}
 
-	const clearAll = () => {
-		onGenresChange([])
-	}
-
 	return (
-		<div className="space-y-4">
-			<Accordion type="single" collapsible className="w-full">
-				<AccordionItem value="genres">
-					<AccordionTrigger>
-						{" "}
-						<div className="flex items-center justify-between">
-							<h3 className="text-lg font-semibold">Filter by Genre</h3>
-						</div>
-					</AccordionTrigger>
-					<AccordionContent>
-						<div className="flex flex-wrap gap-2">
-							{allGenres.map((genre) => {
-								const isSelected = selectedGenres.includes(genre)
-								return (
-									<Badge
-										key={genre}
-										variant={isSelected ? "default" : "outline"}
-										className={`cursor-pointer px-4 py-2 text-sm transition-all ${
-											isSelected ? "bg-primary text-primary-foreground" : ""
-										}`}
-										onClick={() => toggleGenre(genre)}
-									>
-										{genre}
-									</Badge>
-								)
-							})}
-							{selectedGenres.length > 0 && (
-								<Trash
-									className="w-4 self-center h-4 mr-1 hover:cursor-pointer"
-									onClick={clearAll}
-								/>
-							)}
-						</div>
-					</AccordionContent>
-				</AccordionItem>
-			</Accordion>
+		<div className="space-y-3">
+			<h2 className="text-sm font-semibold text-foreground">Filter by Genre</h2>
+			<div className="flex gap-2 flex-wrap">
+				{Object.keys(genreMap).map((genre) => (
+					<Button
+						key={genre}
+						variant={selectedGenres.includes(genre) ? "default" : "outline"}
+						size="sm"
+						onClick={() => toggleGenre(genre)}
+						className="rounded-full"
+					>
+						{genre}
+					</Button>
+				))}
+			</div>
 		</div>
 	)
 }

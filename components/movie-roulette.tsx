@@ -1,7 +1,6 @@
 "use client"
 
-import { Check, ListVideo, PartyPopper, Plus, Sparkles, Trash } from "lucide-react"
-import Image from "next/image"
+import { Check, ListVideo, PartyPopper, Plus, Sparkles, X } from "lucide-react"
 import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryStates } from "nuqs"
 import { useEffect, useState } from "react"
 import { allGenres, GenreFilters } from "@/components/genre-filters"
@@ -9,14 +8,14 @@ import { QueueModal } from "@/components/queue-modal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { YearFilter } from "@/components/year-filter"
 import { QUEUE_STORAGE_KEY } from "@/lib/constants"
 import Header from "./header"
-import { NoImage } from "./no-image"
+import { SelectedMovie } from "./selected-movie"
 import { ButtonGroup } from "./ui/button-group"
 import { Spinner } from "./ui/spinner"
+import { YearSlider } from "./year-slider"
 
-interface Movie {
+export interface Movie {
 	title: string
 	year: number
 	genres: string[]
@@ -49,13 +48,11 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	const [isSpinning, setIsSpinning] = useState(false)
 	const [params, setParams] = useQueryStates({
 		genres: parseAsArrayOf(parseAsString).withDefault([]),
-		years: parseAsArrayOf(parseAsInteger).withDefault([]),
+		year_start: parseAsInteger.withDefault(new Date().getFullYear()),
+		year_end: parseAsInteger.withDefault(new Date().getFullYear()),
 		movieId: parseAsInteger,
 	})
-	const [errors, setErrors] = useState<{ genre: string; year: string }>({
-		genre: "",
-		year: "",
-	})
+
 	const [queue, setQueue] = useState<Movie[]>([])
 	const [isLoadingQueue, setIsLoadingQueue] = useState(true)
 
@@ -97,19 +94,6 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	}
 
 	const handleSpin = async (overrides: { genre?: string; year?: number } = {}) => {
-		if (
-			!overrides.genre &&
-			params.genres.length === 0 &&
-			!overrides.year &&
-			params.years.length === 0
-		) {
-			setErrors({
-				genre: "Please select at least one genre or year",
-				year: "",
-			})
-			return
-		}
-
 		setIsSpinning(true)
 
 		const randomGenre =
@@ -117,11 +101,12 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 			(params.genres.length > 0
 				? params.genres[Math.floor(Math.random() * params.genres.length)]
 				: null)
-		const randomYear =
-			overrides.year ||
-			(params.years.length > 0
-				? params.years[Math.floor(Math.random() * params.years.length)]
-				: null)
+
+		let randomYear = overrides.year
+		if (!randomYear && params.year_start && params.year_end) {
+			const yearDiff = params.year_end - params.year_start
+			randomYear = params.year_start + Math.floor(Math.random() * (yearDiff + 1))
+		}
 		const genreId = randomGenre && randomGenre in genreMap ? genreMap[randomGenre] : null
 
 		try {
@@ -152,7 +137,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 					`https://api.themoviedb.org/3/movie/${randomMovie.id}?api_key=${API_KEY}`,
 				)
 				const detailData = await detailResponse.json()
-				console.log({ detailData })
+
 				if (detailData.id) {
 					const movie = {
 						title: detailData.title,
@@ -173,25 +158,29 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 		} catch (_error) {
 			console.error("Failed to fetch movie:", _error)
 			setIsSpinning(false)
-			setErrors({
-				genre: "",
-				year: "Failed to fetch movie. Please try again.",
-			})
 		}
 	}
 
-	const clearFilters = () => {
-		setParams({ genres: [], years: [], movieId: null })
-		setErrors({ genre: "", year: "" })
+	const toggleGenre = (genre: string) => {
+		if (params.genres.includes(genre)) {
+			setParams({ genres: params.genres.filter((g) => g !== genre) })
+		} else {
+			setParams({ genres: [...params.genres, genre] })
+		}
 	}
 
 	const handleRandom = () => {
-		setErrors({ genre: "", year: "" })
 		const randomGenre = allGenres[Math.floor(Math.random() * allGenres.length)]
 		const randomYear = availableYears[Math.floor(Math.random() * availableYears.length)]
-		setParams({ genres: [randomGenre], years: [randomYear] })
+		setParams({
+			genres: [randomGenre],
+			year_start: randomYear,
+			year_end: randomYear,
+		})
+
 		handleSpin({ genre: randomGenre, year: randomYear })
 	}
+
 	return (
 		<>
 			<Header
@@ -222,47 +211,11 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 							<Card className="w-full max-w-sm md:max-w-lg">
 								<div className="space-y-8">
 									<div className="min-h-[200px] flex items-center justify-center">
-										{selectedMovie ? (
-											<div className="text-center space-y-4 animate-in fade-in duration-300">
-												{selectedMovie.poster ? (
-													<div className="flex justify-center pb-8">
-														<a
-															href={`https://www.imdb.com/title/${selectedMovie.imdb_id}`}
-															target="_blank"
-															rel="noopener noreferrer"
-															className="inline-flex items-center gap-2 text-primary hover:underline"
-														>
-															<Image
-																width={500}
-																height={750}
-																onError={() => setIsSpinning(false)}
-																onLoad={() => setIsSpinning(false)}
-																src={selectedMovie.poster}
-																alt={`${selectedMovie.title} poster`}
-																className={` max-h-[400px] object-contain transition-all ${isSpinning ? "blur-sm" : ""}`}
-															/>
-														</a>
-													</div>
-												) : (
-													<NoImage />
-												)}
-												<h2 className="text-3xl md:text-5xl font-bold text-balance">
-													{selectedMovie.title}
-												</h2>
-												<p className="text-xl md:text-2xl text-muted-foreground">
-													{selectedMovie.year}
-												</p>
-												<div className="flex flex-wrap gap-2 justify-center">
-													{selectedMovie.genres.map((genre) => (
-														<Badge key={genre} variant="outline" className="text-sm px-3 py-1">
-															{genre}
-														</Badge>
-													))}
-												</div>
-											</div>
-										) : (
-											<NoImage variant="default" />
-										)}
+										<SelectedMovie
+											selectedMovie={selectedMovie}
+											setIsSpinning={setIsSpinning}
+											isSpinning={isSpinning}
+										/>
 									</div>
 
 									<div className="flex justify-center">
@@ -292,53 +245,49 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 											</Button>
 										</ButtonGroup>
 									</div>
-									{errors.genre && (
-										<p className="flex justify-center text-red-500 text-sm mt-2">{errors.genre}</p>
-									)}
+
 									<div className="flex justify-center">
-										<ButtonGroup>
-											<Button
-												disabled={params.genres.length === 0 && params.years.length === 0}
-												variant="destructive"
-												onClick={clearFilters}
-												className="min-w-[155px]"
-											>
-												<Trash className="size-5" />
-												Clear filters
-											</Button>
-											<Button className="min-w-[155px]" variant="outline" onClick={handleRandom}>
-												<PartyPopper className="size-5" />
-												Random
-											</Button>
-										</ButtonGroup>
+										<Button className="min-w-[155px]" variant="outline" onClick={handleRandom}>
+											<PartyPopper className="size-5" />
+											Random
+										</Button>
 									</div>
 								</div>
 							</Card>
 						</div>
-						<div className="text-center text-sm text-muted-foreground pt-4">
-							<p>
-								{params.genres.length > 0 || params.years.length > 0
-									? `Filtering by: ${[
-											params.genres.length > 0 ? `Genres: ${params.genres.join(", ")}` : "",
-											params.years.length > 0 ? `Years: ${params.years.join(", ")}` : "",
-										]
-											.filter(Boolean)
-											.join(" | ")}`
-									: "Select genres or years above to filter your movie selection"}
-							</p>
-						</div>
-						<GenreFilters
-							setErrors={setErrors}
-							selectedGenres={params.genres as string[]}
-							onGenresChange={(genres) => setParams({ genres })}
-						/>
+						<div className="space-y-6">
+							<div className="text-center text-sm text-muted-foreground pt-4">
+								<div className="flex items-center gap-2 flex-wrap">
+									<span className="text-sm text-muted-foreground">Active filters:</span>
+									{params.genres.map((genre) => (
+										<Badge
+											key={genre}
+											variant="default"
+											className="gap-1.5 pr-1 cursor-pointer hover:bg-primary/80"
+											onClick={() => toggleGenre(genre)}
+										>
+											{genre}
+											<X className="size-3" />
+										</Badge>
+									))}
+									{params.year_start && params.year_end && (
+										<Badge variant="default" className="gap-1.5">
+											{params.year_start === params.year_end
+												? params.year_start
+												: `${params.year_start}–${params.year_end}`}
+										</Badge>
+									)}
+								</div>
+							</div>
+							{/* Genre Filters */}
+							<GenreFilters
+								selectedGenres={params.genres as string[]}
+								onGenresChange={(genres) => setParams({ genres })}
+							/>
 
-						<YearFilter
-							setErrors={setErrors}
-							availableYears={availableYears}
-							selectedYears={params.years as number[]}
-							onYearsChange={(years) => setParams({ years })}
-						/>
+							{/* Year Range Filter */}
+							<YearSlider />
+						</div>
 					</div>
 				</div>
 			</div>
