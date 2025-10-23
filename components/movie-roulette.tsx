@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { YearFilter } from "@/components/year-filter"
+import { QUEUE_STORAGE_KEY } from "@/lib/constants"
 import Header from "./header"
 import { NoImage } from "./no-image"
 import { ButtonGroup } from "./ui/button-group"
@@ -26,7 +27,6 @@ interface Movie {
 
 const API_KEY = "57f535f358393665753c938201a145cb"
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
-const QUEUE_STORAGE_KEY = "movie-roulette-queue"
 
 const genreMap: Record<string, number> = {
 	Action: 28,
@@ -199,6 +199,10 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 					<QueueModal
 						movies={queue}
 						onRemove={handleRemoveFromQueue}
+						onClear={() => {
+							setQueue([])
+							localStorage.removeItem(QUEUE_STORAGE_KEY)
+						}}
 						trigger={
 							<Button variant="outline">
 								<ListVideo className="w-5 h-5 mr-2" />
