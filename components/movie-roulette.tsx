@@ -1,8 +1,9 @@
 "use client"
 
-import { Check, Film, ListVideo, Loader2, PartyPopper, Plus, Sparkles, Trash } from "lucide-react"
+import { Check, ListVideo, PartyPopper, Plus, Sparkles, Trash } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryStates } from "nuqs"
 import { allGenres, GenreFilters } from "@/components/genre-filters"
 import { QueueModal } from "@/components/queue-modal"
 import { Badge } from "@/components/ui/badge"
@@ -12,6 +13,7 @@ import { YearFilter } from "@/components/year-filter"
 import Header from "./header"
 import { NoImage } from "./no-image"
 import { ButtonGroup } from "./ui/button-group"
+import { Spinner } from "./ui/spinner"
 
 interface Movie {
 	title: string
@@ -45,8 +47,11 @@ const genreMap: Record<string, number> = {
 export function MovieRoulette() {
 	const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
 	const [isSpinning, setIsSpinning] = useState(false)
-	const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-	const [selectedYears, setSelectedYears] = useState<number[]>([])
+	const [params, setParams] = useQueryStates({
+		genres: parseAsArrayOf(parseAsString).withDefault([]),
+		years: parseAsArrayOf(parseAsInteger).withDefault([]),
+		movieId: parseAsInteger,
+	})
 	const [errors, setErrors] = useState<{ genre: string; year: string }>({
 		genre: "",
 		year: "",
@@ -77,6 +82,34 @@ export function MovieRoulette() {
 		loadQueue()
 	}, [])
 
+	useEffect(() => {
+		const fetchMovieFromUrl = async () => {
+			if (params.movieId && !selectedMovie) {
+				try {
+					const detailResponse = await fetch(
+						`https://api.themoviedb.org/3/movie/${params.movieId}?api_key=${API_KEY}`,
+					)
+					const detailData = await detailResponse.json()
+					if (detailData.id) {
+						setSelectedMovie({
+							title: detailData.title,
+							year: new Date(detailData.release_date).getFullYear(),
+							genres: detailData.genres
+								? detailData.genres.map((g: { name: string }) => g.name)
+								: [],
+							id: detailData.id,
+							imdb_id: detailData.imdb_id,
+							poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
+						})
+					}
+				} catch (error) {
+					console.error("Failed to fetch movie from URL:", error)
+				}
+			}
+		}
+		fetchMovieFromUrl()
+	}, [params.movieId, selectedMovie])
+
 	const handleAddToQueue = () => {
 		if (selectedMovie && !queue.find((m) => m.id === selectedMovie.id)) {
 			const updated = [...queue, selectedMovie]
@@ -94,9 +127,9 @@ export function MovieRoulette() {
 	const handleSpin = async (overrides: { genre?: string; year?: number } = {}) => {
 		if (
 			!overrides.genre &&
-			selectedGenres.length === 0 &&
+			params.genres.length === 0 &&
 			!overrides.year &&
-			selectedYears.length === 0
+			params.years.length === 0
 		) {
 			setErrors({
 				genre: "Please select at least one genre or year",
@@ -109,34 +142,34 @@ export function MovieRoulette() {
 
 		const randomGenre =
 			overrides.genre ||
-			(selectedGenres.length > 0
-				? selectedGenres[Math.floor(Math.random() * selectedGenres.length)]
+			(params.genres.length > 0
+				? params.genres[Math.floor(Math.random() * params.genres.length)]
 				: null)
 		const randomYear =
 			overrides.year ||
-			(selectedYears.length > 0
-				? selectedYears[Math.floor(Math.random() * selectedYears.length)]
+			(params.years.length > 0
+				? params.years[Math.floor(Math.random() * params.years.length)]
 				: null)
-		const genreId = randomGenre ? genreMap[randomGenre] : null
+		const genreId = randomGenre && randomGenre in genreMap ? genreMap[randomGenre] : null
 
 		try {
-			const params = new URLSearchParams({
+			const apiParams = new URLSearchParams({
 				api_key: API_KEY,
 				sort_by: "popularity.desc",
 			})
 
 			if (genreId) {
-				params.append("with_genres", genreId.toString())
+				apiParams.append("with_genres", genreId.toString())
 			}
 
 			const yearToSearch =
 				randomYear || availableYears[Math.floor(Math.random() * availableYears.length)]
 			if (yearToSearch) {
-				params.append("primary_release_year", yearToSearch.toString())
+				apiParams.append("primary_release_year", yearToSearch.toString())
 			}
 
 			const response = await fetch(
-				`https://api.themoviedb.org/3/discover/movie?${params.toString()}`,
+				`https://api.themoviedb.org/3/discover/movie?${apiParams.toString()}`,
 			)
 			const data = await response.json()
 
@@ -149,14 +182,16 @@ export function MovieRoulette() {
 				const detailData = await detailResponse.json()
 				console.log({ detailData })
 				if (detailData.id) {
-					setSelectedMovie({
+					const movie = {
 						title: detailData.title,
 						year: new Date(detailData.release_date).getFullYear(),
 						genres: detailData.genres ? detailData.genres.map((g: { name: string }) => g.name) : [],
 						id: detailData.id,
 						imdb_id: detailData.imdb_id,
 						poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
-					})
+					}
+					setSelectedMovie(movie)
+					setParams({ movieId: detailData.id })
 
 					if (!detailData.poster_path) {
 						setIsSpinning(false)
@@ -174,17 +209,15 @@ export function MovieRoulette() {
 	}
 
 	const clearFilters = () => {
-		setSelectedGenres([])
-		setSelectedYears([])
+		setParams({ genres: [], years: [] })
 		setErrors({ genre: "", year: "" })
 	}
 
 	const handleRandom = () => {
 		setErrors({ genre: "", year: "" })
 		const randomGenre = allGenres[Math.floor(Math.random() * allGenres.length)]
-		setSelectedGenres([randomGenre])
 		const randomYear = availableYears[Math.floor(Math.random() * availableYears.length)]
-		setSelectedYears([randomYear])
+		setParams({ genres: [randomGenre], years: [randomYear] })
 		handleSpin({ genre: randomGenre, year: randomYear })
 	}
 	return (
@@ -199,7 +232,7 @@ export function MovieRoulette() {
 								<ListVideo className="w-5 h-5 mr-2" />
 								Queue
 								{isLoadingQueue ? (
-									<Loader2 className="ml-2 w-4 h-4 animate-spin text-muted-foreground" />
+									<Spinner />
 								) : (
 									queue.length > 0 && (
 										<Badge className="ml-2 px-2 py-0.5 text-xs">{queue.length}</Badge>
@@ -213,9 +246,6 @@ export function MovieRoulette() {
 			<div className="container">
 				<div className="mx-auto px-4 py-2">
 					<div className="max-w-4xl mx-auto ">
-						{/* Genre Filters */}
-
-						{/* Movie Display Card */}
 						<div className="flex justify-center items-center pt-4">
 							<Card className="w-full max-w-sm md:max-w-lg">
 								<div className="space-y-8">
@@ -259,18 +289,10 @@ export function MovieRoulette() {
 												</div>
 											</div>
 										) : (
-											<div className="text-center space-y-4">
-												<Film className="w-20 h-20 mx-auto text-muted-foreground/30" />
-												<p className="text-xl text-muted-foreground">
-													{selectedGenres.length > 0 || selectedYears.length > 0
-														? "Ready to spin with your selected filters!"
-														: "Select at least one genre or year to start"}
-												</p>
-											</div>
+											<NoImage variant="default" />
 										)}
 									</div>
 
-									{/* Spin Button */}
 									<div className="flex justify-center">
 										<ButtonGroup>
 											<Button
@@ -304,7 +326,7 @@ export function MovieRoulette() {
 									<div className="flex justify-center">
 										<ButtonGroup>
 											<Button
-												disabled={selectedGenres.length === 0 && selectedYears.length === 0}
+												disabled={params.genres.length === 0 && params.years.length === 0}
 												variant="destructive"
 												onClick={clearFilters}
 												className="min-w-[155px]"
@@ -321,13 +343,12 @@ export function MovieRoulette() {
 								</div>
 							</Card>
 						</div>
-						{/* Info Section */}
 						<div className="text-center text-sm text-muted-foreground pt-4">
 							<p>
-								{selectedGenres.length > 0 || selectedYears.length > 0
+								{params.genres.length > 0 || params.years.length > 0
 									? `Filtering by: ${[
-											selectedGenres.length > 0 ? `Genres: ${selectedGenres.join(", ")}` : "",
-											selectedYears.length > 0 ? `Years: ${selectedYears.join(", ")}` : "",
+											params.genres.length > 0 ? `Genres: ${params.genres.join(", ")}` : "",
+											params.years.length > 0 ? `Years: ${params.years.join(", ")}` : "",
 										]
 											.filter(Boolean)
 											.join(" | ")}`
@@ -336,16 +357,15 @@ export function MovieRoulette() {
 						</div>
 						<GenreFilters
 							setErrors={setErrors}
-							selectedGenres={selectedGenres}
-							onGenresChange={setSelectedGenres}
+							selectedGenres={params.genres as string[]}
+							onGenresChange={(genres) => setParams({ genres })}
 						/>
 
-						{/* Year Filter */}
 						<YearFilter
 							setErrors={setErrors}
 							availableYears={availableYears}
-							selectedYears={selectedYears}
-							onYearsChange={setSelectedYears}
+							selectedYears={params.years as number[]}
+							onYearsChange={(years) => setParams({ years })}
 						/>
 					</div>
 				</div>
