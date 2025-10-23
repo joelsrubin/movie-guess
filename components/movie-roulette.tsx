@@ -181,7 +181,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	}
 
 	const clearFilters = () => {
-		setParams({ genres: [], years: [] })
+		setParams({ genres: [], years: [], movieId: null })
 		setErrors({ genre: "", year: "" })
 	}
 
