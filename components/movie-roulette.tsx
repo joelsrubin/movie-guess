@@ -132,7 +132,7 @@ export function MovieRoulette() {
 						imdb_id: detailData.imdb_id,
 						poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
 					})
-					setIsSpinning(false)
+					// setIsSpinning(false)
 				}
 			}
 		} catch (_error) {
@@ -197,6 +197,8 @@ export function MovieRoulette() {
 															className="inline-flex items-center gap-2 text-primary hover:underline"
 														>
 															<img
+																onError={() => setIsSpinning(false)}
+																onLoad={() => setIsSpinning(false)}
 																src={selectedMovie.poster}
 																alt={`${selectedMovie.title} poster`}
 																className={`rounded-lg shadow-lg max-h-[400px] object-cover transition-all ${isSpinning ? "blur-sm" : ""}`}
