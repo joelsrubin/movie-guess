@@ -1,5 +1,8 @@
-import { Film } from "lucide-react"
+import { Film, Share } from "lucide-react"
+import { toast } from "sonner"
 import { ModeToggle } from "./mode-toggle"
+import { Button } from "./ui/button"
+import { ButtonGroup } from "./ui/button-group"
 
 interface HeaderProps {
 	queueButton?: React.ReactNode
@@ -7,6 +10,11 @@ interface HeaderProps {
 }
 
 export default function Header({ queueButton }: HeaderProps) {
+	const copyToClipboard = () => {
+		navigator.clipboard.writeText(window.location.href)
+		toast.success("Copied to clipboard")
+	}
+
 	return (
 		<div className="sticky top-0 z-50 py-2 max-w-screen flex justify-between items-center border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-2">
 			<div className="flex items-center justify-center gap-3">
@@ -15,7 +23,12 @@ export default function Header({ queueButton }: HeaderProps) {
 			</div>
 			<div className="flex items-center gap-3">
 				{queueButton && <div>{queueButton}</div>}
-				<ModeToggle />
+				<ButtonGroup>
+					<ModeToggle />
+					<Button variant="outline" size="icon" onClick={copyToClipboard}>
+						<Share />
+					</Button>
+				</ButtonGroup>
 			</div>
 		</div>
 	)
