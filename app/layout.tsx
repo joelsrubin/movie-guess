@@ -20,6 +20,12 @@ export const metadata: Metadata = {
 	description: "Grab a flick!",
 	icons: {
 		icon: "https://fav.farm/🎬",
+		apple: "/movie.svg",
+	},
+	appleWebApp: {
+		capable: true,
+		statusBarStyle: "black-translucent",
+		title: "Movie Roulette",
 	},
 }
 

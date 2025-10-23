@@ -25,10 +25,6 @@ export async function generateMetadata({
 					: null
 
 				return {
-					icons: {
-						icon: "/movie.svg",
-						apple: "/movie.svg",
-					},
 					openGraph: {
 						title,
 						description,
@@ -49,10 +45,6 @@ export async function generateMetadata({
 	return {
 		title: "Movie Roulette",
 		description: "Take it for a spin",
-		icons: {
-			icon: "/movie.svg",
-			apple: "/movie.svg",
-		},
 	}
 }
 
