@@ -24,10 +24,9 @@ function ButtonGroup({
 	className,
 	orientation,
 	...props
-}: React.ComponentProps<"div"> & VariantProps<typeof buttonGroupVariants>) {
+}: React.ComponentProps<"fieldset"> & VariantProps<typeof buttonGroupVariants>) {
 	return (
-		<div
-			role="group"
+		<fieldset
 			data-slot="button-group"
 			data-orientation={orientation}
 			className={cn(buttonGroupVariants({ orientation }), className)}
@@ -66,7 +65,7 @@ function ButtonGroupSeparator({
 			data-slot="button-group-separator"
 			orientation={orientation}
 			className={cn(
-				"bg-input relative !m-0 self-stretch data-[orientation=vertical]:h-auto",
+				"bg-input relative m-0! self-stretch data-[orientation=vertical]:h-auto",
 				className,
 			)}
 			{...props}

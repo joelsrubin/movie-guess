@@ -92,12 +92,14 @@ export function MovieRoulette() {
 
 	const handleSpin = async (overrides: { genre?: string; year?: number } = {}) => {
 		if (
-			(!overrides.genre && selectedGenres.length === 0) ||
-			(!overrides.year && selectedYears.length === 0)
+			!overrides.genre &&
+			selectedGenres.length === 0 &&
+			!overrides.year &&
+			selectedYears.length === 0
 		) {
 			setErrors({
-				genre: selectedGenres.length === 0 ? "Please select at least one genre" : "",
-				year: selectedYears.length === 0 ? "Please select at least one year" : "",
+				genre: "Please select at least one genre or year",
+				year: "",
 			})
 			return
 		}
@@ -105,14 +107,33 @@ export function MovieRoulette() {
 		setIsSpinning(true)
 
 		const randomGenre =
-			overrides.genre || selectedGenres[Math.floor(Math.random() * selectedGenres.length)]
+			overrides.genre ||
+			(selectedGenres.length > 0
+				? selectedGenres[Math.floor(Math.random() * selectedGenres.length)]
+				: null)
 		const randomYear =
-			overrides.year || selectedYears[Math.floor(Math.random() * selectedYears.length)]
-		const genreId = genreMap[randomGenre]
+			overrides.year ||
+			(selectedYears.length > 0
+				? selectedYears[Math.floor(Math.random() * selectedYears.length)]
+				: null)
+		const genreId = randomGenre ? genreMap[randomGenre] : null
 
 		try {
+			const params = new URLSearchParams({
+				api_key: API_KEY,
+				sort_by: "popularity.desc",
+			})
+
+			if (genreId) {
+				params.append("with_genres", genreId.toString())
+			}
+
+			if (randomYear) {
+				params.append("primary_release_year", randomYear.toString())
+			}
+
 			const response = await fetch(
-				`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&primary_release_year=${randomYear}&sort_by=popularity.desc`,
+				`https://api.themoviedb.org/3/discover/movie?${params.toString()}`,
 			)
 			const data = await response.json()
 
@@ -227,9 +248,9 @@ export function MovieRoulette() {
 											<div className="text-center space-y-4">
 												<Film className="w-20 h-20 mx-auto text-muted-foreground/30" />
 												<p className="text-xl text-muted-foreground">
-													{selectedGenres.length > 0 && selectedYears.length > 0
+													{selectedGenres.length > 0 || selectedYears.length > 0
 														? "Ready to spin with your selected filters!"
-														: "Select at least one genre and one year to start"}
+														: "Select at least one genre or year to start"}
 												</p>
 											</div>
 										)}
@@ -261,6 +282,9 @@ export function MovieRoulette() {
 											</Button>
 										</ButtonGroup>
 									</div>
+									{errors.genre && (
+										<p className="flex justify-center text-red-500 text-sm mt-2">{errors.genre}</p>
+									)}
 									<div className="flex justify-center">
 										<Button variant="outline" onClick={handleRandom}>
 											<PartyPopper className="size-5" />
@@ -288,7 +312,6 @@ export function MovieRoulette() {
 							selectedGenres={selectedGenres}
 							onGenresChange={setSelectedGenres}
 						/>
-						{errors.genre && <p className="text-red-500 text-sm mt-2">{errors.genre}</p>}
 
 						{/* Year Filter */}
 						<YearFilter

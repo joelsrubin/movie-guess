@@ -1,6 +1,7 @@
 "use client"
 
 import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react"
+import Image from "next/image"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -67,7 +68,9 @@ export function QueueModal({ movies, trigger, onRemove, isLoading = false }: Que
 									<CardHeader>
 										<div className="flex gap-4">
 											{movie.poster && (
-												<img
+												<Image
+													width={500}
+													height={750}
 													src={movie.poster}
 													alt={`${movie.title} poster`}
 													className="w-24 h-36 object-cover rounded-md"
