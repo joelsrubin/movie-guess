@@ -199,10 +199,6 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 					<QueueModal
 						movies={queue}
 						onRemove={handleRemoveFromQueue}
-						onClear={() => {
-							setQueue([])
-							localStorage.removeItem(QUEUE_STORAGE_KEY)
-						}}
 						trigger={
 							<Button variant="outline">
 								<ListVideo className="w-5 h-5 mr-2" />

@@ -27,16 +27,9 @@ interface QueueModalProps {
 	trigger: React.ReactNode
 	onRemove: (movieId: number) => void
 	isLoading?: boolean
-	onClear?: () => void
 }
 
-export function QueueModal({
-	movies,
-	trigger,
-	onRemove,
-	isLoading = false,
-	onClear,
-}: QueueModalProps) {
+export function QueueModal({ movies, trigger, onRemove, isLoading = false }: QueueModalProps) {
 	const [currentPage, setCurrentPage] = useState(1)
 	const itemsPerPage = 5
 	const totalPages = Math.ceil(movies.length / itemsPerPage)
