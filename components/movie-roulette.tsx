@@ -154,7 +154,10 @@ export function MovieRoulette() {
 						imdb_id: detailData.imdb_id,
 						poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
 					})
-					// setIsSpinning(false)
+
+					if (!detailData.poster_path) {
+						setIsSpinning(false)
+					}
 				}
 			}
 		} catch (_error) {
