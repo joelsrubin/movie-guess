@@ -24,6 +24,7 @@ export interface Movie {
 	id: number
 	poster: string
 	imdb_id: string
+	blurb: string
 }
 
 export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
@@ -166,6 +167,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 													? "Added to Queue"
 													: "Add to Queue"}
 											</Button>
+
 											<Button
 												variant="outline"
 												onClick={() => handleSpin()}
@@ -195,7 +197,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 										<Badge
 											key={genre}
 											variant="default"
-											className="gap-1.5 pr-1 cursor-pointer hover:bg-primary/80"
+											// className="gap-1.5 pr-1 cursor-pointer hover:bg-primary/80"
 											onClick={() => toggleGenre(genre)}
 										>
 											{genre}
@@ -223,6 +225,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 					</div>
 				</div>
 			</div>
+			<footer className="pb-safe" />
 		</>
 	)
 }

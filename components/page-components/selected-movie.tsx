@@ -1,10 +1,14 @@
 "use client"
 
 import { useIsMutating, useQuery } from "@tanstack/react-query"
+import { ChevronsDownUp, ChevronsUpDown } from "lucide-react"
 import Image from "next/image"
+import { useState } from "react"
 import { movieKeys } from "@/lib/query-keys"
 import type { Movie } from "../movie-roulette"
 import { Badge } from "../ui/badge"
+import { Button } from "../ui/button"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible"
 import { NoImage } from "./no-image"
 
 export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSpinning: boolean }) {
@@ -15,6 +19,7 @@ export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSp
 	})
 
 	const isMutating = useIsMutating()
+	const [isOpen, setIsOpen] = useState(false)
 
 	return selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
@@ -39,15 +44,31 @@ export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSp
 			) : (
 				<NoImage />
 			)}
-			<h2 className="text-3xl md:text-5xl font-bold text-balance">{selectedMovie.title}</h2>
-			<p className="text-xl md:text-2xl text-muted-foreground">{selectedMovie.year}</p>
-			<div className="flex flex-wrap gap-2 justify-center">
-				{selectedMovie.genres.map((genre) => (
-					<Badge key={genre} variant="outline" className="text-sm px-3 py-1">
-						{genre}
-					</Badge>
-				))}
-			</div>
+			<Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2">
+				<div className="flex flex-col items-center gap-2">
+					<div className="flex flex-row gap-2">
+						<h2 className="text-3xl md:text-5xl font-bold text-balance">{selectedMovie.title}</h2>
+						{selectedMovie.blurb && (
+							<CollapsibleTrigger asChild>
+								<Button variant="ghost" size="icon" className="gap-2">
+									<ChevronsUpDown className="h-4 w-4" />
+								</Button>
+							</CollapsibleTrigger>
+						)}
+					</div>
+					<p className="text-xl md:text-2xl text-muted-foreground">{selectedMovie.year}</p>
+				</div>
+				<CollapsibleContent className="max-w-2xl mx-auto px-4">
+					<p className="text-muted-foreground text-sm text-balance">{selectedMovie.blurb}</p>
+				</CollapsibleContent>
+				<div className="flex flex-wrap gap-2 justify-center">
+					{selectedMovie.genres.map((genre) => (
+						<Badge key={genre} variant="outline" className="text-sm px-3 py-1">
+							{genre}
+						</Badge>
+					))}
+				</div>
+			</Collapsible>
 		</div>
 	) : (
 		<NoImage variant="default" />

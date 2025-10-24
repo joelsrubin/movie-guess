@@ -78,6 +78,7 @@ export default async function Home({
 						id: detailData.id,
 						imdb_id: detailData.imdb_id,
 						poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
+						blurb: detailData.overview,
 					}
 				}
 				return null

@@ -79,7 +79,7 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 		`https://api.themoviedb.org/3/movie/${randomMovie.id}?api_key=${API_KEY}`,
 	)
 	const detailData = await detailResponse.json()
-
+	console.log({ detailData })
 	if (!detailData.id) {
 		throw new Error("Failed to fetch movie details")
 	}
@@ -91,6 +91,7 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 		id: detailData.id,
 		imdb_id: detailData.imdb_id,
 		poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
+		blurb: detailData.overview,
 	}
 }
 
@@ -112,5 +113,6 @@ export async function fetchMovieById(movieId: number): Promise<Movie> {
 		id: detailData.id,
 		imdb_id: detailData.imdb_id,
 		poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
+		blurb: detailData.overview,
 	}
 }
