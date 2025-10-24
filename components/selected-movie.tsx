@@ -31,7 +31,7 @@ export function SelectedMovie({
 							alt={`${selectedMovie.title} poster`}
 							width={500}
 							height={750}
-							className={`max-h-[400px] w-auto object-contain transition-all duration-500 ${isSpinning ? "blur-sm opacity-50" : "blur-0 opacity-100"}`}
+							className={`max-h-[400px] w-auto object-contain transition-all duration-500 ${isSpinning ? "blur-sm" : ""}`}
 							priority
 						/>
 					</a>
