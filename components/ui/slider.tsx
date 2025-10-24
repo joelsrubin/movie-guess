@@ -2,7 +2,7 @@
 
 import * as SliderPrimitive from "@radix-ui/react-slider"
 import * as React from "react"
-
+import { useWindowSize } from "@/hooks/use-window-size"
 import { cn } from "@/lib/utils"
 
 function Slider({
@@ -18,6 +18,7 @@ function Slider({
 		[value, defaultValue, min, max],
 	)
 
+	const { breakpoint } = useWindowSize({ initializeWithValue: false })
 	return (
 		<SliderPrimitive.Root
 			data-slot="slider"
@@ -48,7 +49,7 @@ function Slider({
 				<SliderPrimitive.Thumb
 					data-slot="slider-thumb"
 					key={k as number}
-					className="border-primary ring-ring/50 block size-4 shrink-0 rounded-full border bg-white shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+					className={`border-primary ring-ring/50 block ${breakpoint.name.includes("XS") || breakpoint.name.includes("SM") ? "size-5" : "size-3"} shrink-0 rounded-full border bg-white shadow-sm transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50`}
 				/>
 			))}
 		</SliderPrimitive.Root>

@@ -1,11 +1,11 @@
-import { useYearParams } from "@/hooks/useYearParams"
+import { useYearParams } from "@/hooks/use-year-params"
 import { Slider } from "./ui/slider"
 
 export function YearSlider() {
 	const [params, setParams] = useYearParams()
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4 pb-4">
 			<div className="flex items-center justify-between">
 				<h2 className="text-sm font-semibold text-foreground">Filter by Year</h2>
 				<span className="text-sm text-muted-foreground">
@@ -24,10 +24,6 @@ export function YearSlider() {
 				}}
 				className="w-full"
 			/>
-			<div className="flex justify-between text-xs text-muted-foreground">
-				<span>1940</span>
-				<span>{new Date().getFullYear()}</span>
-			</div>
 		</div>
 	)
 }
