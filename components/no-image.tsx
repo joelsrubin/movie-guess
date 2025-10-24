@@ -1,3 +1,4 @@
+"use client"
 import { PlusCircle, TriangleAlert } from "lucide-react"
 import { Empty, EmptyDescription, EmptyMedia } from "./ui/empty"
 
