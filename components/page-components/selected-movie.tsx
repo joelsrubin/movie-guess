@@ -27,7 +27,6 @@ export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSp
 						className="inline-flex items-center gap-2 text-primary hover:underline"
 					>
 						<Image
-							key={selectedMovie.id}
 							src={selectedMovie.poster}
 							alt={`${selectedMovie.title} poster`}
 							width={500}
