@@ -18,6 +18,7 @@ import { ButtonGroup } from "./ui/button-group"
 
 import { YearSlider } from "./year-slider"
 
+const nul = null
 export interface Movie {
 	title: string
 	year: number
