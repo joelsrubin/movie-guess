@@ -1,7 +1,7 @@
 "use client"
 
 import { useIsMutating, useQuery } from "@tanstack/react-query"
-import { ChevronsDownUp, ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import { movieKeys } from "@/lib/query-keys"
