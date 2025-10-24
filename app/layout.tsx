@@ -7,7 +7,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
 import { Toaster } from "sonner"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/providers/theme-provider"
 import { queryClient } from "@/lib/query-client"
 
 const geistSans = Geist({
