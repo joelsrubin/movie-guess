@@ -135,7 +135,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 					/>
 				}
 			/>
-			<div className="container">
+			<div className="container flex justify-center items-center mx-auto">
 				<div className="mx-auto px-4 py-2">
 					<div className="max-w-4xl mx-auto ">
 						<div className="flex justify-center items-center pt-4">
