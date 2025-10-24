@@ -1,3 +1,5 @@
+"use client"
+
 import { Film, Share } from "lucide-react"
 import { toast } from "sonner"
 import { useWindowSize } from "@/hooks/use-window-size"
@@ -16,19 +18,18 @@ export default function Header({ queueButton }: HeaderProps) {
 		toast.success("Copied to clipboard")
 	}
 
-	const { width = 0, height = 0 } = useWindowSize()
+	const { width = 0 } = useWindowSize({ initializeWithValue: false })
 	const getBreakpoint = () => {
-		if (width < 640) return { name: "XS", color: "destructive" as const }
-		if (width < 768) return { name: "SM", color: "default" as const }
-		if (width < 1024) return { name: "MD", color: "secondary" as const }
-		if (width < 1280) return { name: "LG", color: "outline" as const }
-		if (width < 1536) return { name: "XL", color: "default" as const }
-		return { name: "2XL", color: "secondary" as const }
+		if (width < 640) return { name: "XS" }
+		if (width < 768) return { name: "SM" }
+		if (width < 1024) return { name: "MD" }
+		if (width < 1280) return { name: "LG" }
+		if (width < 1536) return { name: "XL" }
+		return { name: "2XL" }
 	}
 
 	const breakpoint = getBreakpoint()
-	const _aspectRatio = width > 0 ? (width / height).toFixed(2) : "0.00"
-	console.log(breakpoint.name)
+
 	return (
 		<div className="sticky top-0 z-50 py-2 max-w-screen flex justify-between items-center border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-2">
 			<div className="flex items-center justify-center gap-3">

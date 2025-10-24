@@ -1,9 +1,12 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
+import { QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
 import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/theme-provider"
+import { queryClient } from "@/lib/query-client"
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -37,15 +40,18 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					<NuqsAdapter>{children}</NuqsAdapter>
-					<Toaster position="top-left" />
-				</ThemeProvider>
+				<QueryClientProvider client={queryClient}>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange
+					>
+						<NuqsAdapter>{children}</NuqsAdapter>
+						<Toaster position="top-left" />
+					</ThemeProvider>
+					<ReactQueryDevtools initialIsOpen={false} />
+				</QueryClientProvider>
 			</body>
 		</html>
 	)

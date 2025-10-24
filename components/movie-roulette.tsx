@@ -1,5 +1,6 @@
 "use client"
 
+import { useMutation } from "@tanstack/react-query"
 import { Check, ListVideo, PartyPopper, Plus, Sparkles, X } from "lucide-react"
 import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryStates } from "nuqs"
 import { useEffect, useState } from "react"
@@ -8,11 +9,13 @@ import { QueueModal } from "@/components/queue-modal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { fetchRandomMovie } from "@/lib/api"
 import { QUEUE_STORAGE_KEY } from "@/lib/constants"
+import { movieKeys } from "@/lib/query-keys"
 import Header from "./header"
 import { SelectedMovie } from "./selected-movie"
 import { ButtonGroup } from "./ui/button-group"
-import { Spinner } from "./ui/spinner"
+
 import { YearSlider } from "./year-slider"
 
 export interface Movie {
@@ -24,28 +27,8 @@ export interface Movie {
 	imdb_id: string
 }
 
-const API_KEY = "57f535f358393665753c938201a145cb"
-const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
-
-const genreMap: Record<string, number> = {
-	Action: 28,
-	Adventure: 12,
-	Animation: 16,
-	Comedy: 35,
-	Crime: 80,
-	Drama: 18,
-	Fantasy: 14,
-	Horror: 27,
-	Music: 10402,
-	Mystery: 9648,
-	Romance: 10749,
-	"Sci-Fi": 878,
-	Thriller: 53,
-}
-
 export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	const [selectedMovie, setSelectedMovie] = useState<Movie | null>(defaultData)
-	const [isSpinning, setIsSpinning] = useState(false)
 	const [params, setParams] = useQueryStates({
 		genres: parseAsArrayOf(parseAsString).withDefault([]),
 		year_start: parseAsInteger.withDefault(new Date().getFullYear()),
@@ -54,7 +37,6 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	})
 
 	const [queue, setQueue] = useState<Movie[]>([])
-	const [isLoadingQueue, setIsLoadingQueue] = useState(true)
 
 	const currentYear = new Date().getFullYear()
 	const startYear = 1940
@@ -72,8 +54,6 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 				}
 			} catch (error) {
 				console.error("Failed to load queue from localStorage:", error)
-			} finally {
-				setIsLoadingQueue(false)
 			}
 		}
 		loadQueue()
@@ -93,73 +73,27 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 		localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(updated))
 	}
 
-	const handleSpin = async (overrides: { genre?: string; year?: number } = {}) => {
-		setIsSpinning(true)
+	const { mutate: fetchMovie, isPending: isSpinning } = useMutation({
+		mutationFn: fetchRandomMovie,
+		mutationKey: movieKeys.random({
+			genres: params.genres,
+			yearStart: params.year_start,
+			yearEnd: params.year_end,
+		}),
+		onSuccess: (movie) => {
+			setSelectedMovie(movie)
+			setParams({ movieId: movie.id })
+		},
+	})
 
-		const randomGenre =
-			overrides.genre ||
-			(params.genres.length > 0
-				? params.genres[Math.floor(Math.random() * params.genres.length)]
-				: null)
-
-		let randomYear = overrides.year
-		if (!randomYear && params.year_start && params.year_end) {
-			const yearDiff = params.year_end - params.year_start
-			randomYear = params.year_start + Math.floor(Math.random() * (yearDiff + 1))
-		}
-		const genreId = randomGenre && randomGenre in genreMap ? genreMap[randomGenre] : null
-
-		try {
-			const apiParams = new URLSearchParams({
-				api_key: API_KEY,
-				sort_by: "popularity.desc",
-			})
-
-			if (genreId) {
-				apiParams.append("with_genres", genreId.toString())
-			}
-
-			const yearToSearch =
-				randomYear || availableYears[Math.floor(Math.random() * availableYears.length)]
-			if (yearToSearch) {
-				apiParams.append("primary_release_year", yearToSearch.toString())
-			}
-
-			const response = await fetch(
-				`https://api.themoviedb.org/3/discover/movie?${apiParams.toString()}`,
-			)
-			const data = await response.json()
-
-			if (data.results && data.results.length > 0) {
-				const randomMovie = data.results[Math.floor(Math.random() * data.results.length)]
-
-				const detailResponse = await fetch(
-					`https://api.themoviedb.org/3/movie/${randomMovie.id}?api_key=${API_KEY}`,
-				)
-				const detailData = await detailResponse.json()
-
-				if (detailData.id) {
-					const movie = {
-						title: detailData.title,
-						year: new Date(detailData.release_date).getFullYear(),
-						genres: detailData.genres ? detailData.genres.map((g: { name: string }) => g.name) : [],
-						id: detailData.id,
-						imdb_id: detailData.imdb_id,
-						poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
-					}
-					setSelectedMovie(movie)
-					setParams({ movieId: detailData.id })
-
-					if (!detailData.poster_path) {
-						setIsSpinning(false)
-					}
-					setIsSpinning(false)
-				}
-			}
-		} catch (_error) {
-			console.error("Failed to fetch movie:", _error)
-			setIsSpinning(false)
-		}
+	const handleSpin = (overrides: { genre?: string; year?: number } = {}) => {
+		fetchMovie({
+			genres: params.genres,
+			yearStart: params.year_start,
+			yearEnd: params.year_end,
+			genre: overrides.genre,
+			year: overrides.year,
+		})
 	}
 
 	const toggleGenre = (genre: string) => {
@@ -193,12 +127,8 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 							<Button variant="outline">
 								<ListVideo className="w-5 h-5 mr-2" />
 								Queue
-								{isLoadingQueue ? (
-									<Spinner />
-								) : (
-									queue.length > 0 && (
-										<Badge className="ml-2 px-2 py-0.5 text-xs">{queue.length}</Badge>
-									)
+								{queue.length > 0 && (
+									<Badge className="ml-2 px-2 py-0.5 text-xs">{queue.length}</Badge>
 								)}
 							</Button>
 						}
@@ -212,11 +142,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 							<Card className="w-full max-w-sm md:max-w-lg">
 								<div className="space-y-8">
 									<div className="min-h-[200px] flex items-center justify-center">
-										<SelectedMovie
-											selectedMovie={selectedMovie}
-											setIsSpinning={setIsSpinning}
-											isSpinning={isSpinning}
-										/>
+										<SelectedMovie selectedMovie={selectedMovie} isSpinning={isSpinning} />
 									</div>
 
 									<div className="flex justify-center">
@@ -237,7 +163,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 											</Button>
 											<Button
 												variant="outline"
-												onClick={() => handleSpin({})}
+												onClick={() => fetchMovie({})}
 												disabled={isSpinning}
 												className="min-w-[155px]"
 											>

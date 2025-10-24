@@ -5,14 +5,11 @@ import { Badge } from "./ui/badge"
 
 export function SelectedMovie({
 	selectedMovie,
-	setIsSpinning,
 	isSpinning,
 }: {
 	selectedMovie: Movie | null
-	setIsSpinning: (value: boolean) => void
 	isSpinning: boolean
 }) {
-	console.log({ selectedMovie })
 	return selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
 			{selectedMovie.poster ? (
@@ -25,8 +22,6 @@ export function SelectedMovie({
 					>
 						<Image
 							key={selectedMovie.id}
-							onError={() => setIsSpinning(false)}
-							onLoad={() => setIsSpinning(false)}
 							src={selectedMovie.poster}
 							alt={`${selectedMovie.title} poster`}
 							width={500}
