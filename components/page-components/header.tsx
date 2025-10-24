@@ -25,17 +25,7 @@ export default function Header({ queueButton }: HeaderProps) {
 		}
 	}
 
-	const { width = 0 } = useWindowSize({ initializeWithValue: false })
-	const getBreakpoint = () => {
-		if (width < 640) return { name: "XS" }
-		if (width < 768) return { name: "SM" }
-		if (width < 1024) return { name: "MD" }
-		if (width < 1280) return { name: "LG" }
-		if (width < 1536) return { name: "XL" }
-		return { name: "2XL" }
-	}
-
-	const breakpoint = getBreakpoint()
+	const { breakpoint } = useWindowSize({ initializeWithValue: false })
 
 	return (
 		<div className="sticky top-0 z-50 py-2 max-w-screen flex justify-between items-center border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-2">
