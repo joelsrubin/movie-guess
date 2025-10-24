@@ -8,6 +8,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
 import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/providers/theme-provider"
+import { ThemedToaster } from "@/components/providers/themed-toaster"
 import { queryClient } from "@/lib/query-client"
 
 const geistSans = Geist({
@@ -50,7 +51,7 @@ export default function RootLayout({
 						disableTransitionOnChange
 					>
 						<NuqsAdapter>{children}</NuqsAdapter>
-						<Toaster position="top-left" />
+						<ThemedToaster />
 					</ThemeProvider>
 					<ReactQueryDevtools initialIsOpen={false} />
 				</QueryClientProvider>
