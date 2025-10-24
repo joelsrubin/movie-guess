@@ -11,6 +11,7 @@ export function SelectedMovie({
 	setIsSpinning: (value: boolean) => void
 	isSpinning: boolean
 }) {
+	console.log({ selectedMovie })
 	return selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
 			{selectedMovie.poster ? (

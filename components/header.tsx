@@ -19,9 +19,7 @@ export default function Header({ queueButton }: HeaderProps) {
 		<div className="sticky top-0 z-50 py-2 max-w-screen flex justify-between items-center border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-2">
 			<div className="flex items-center justify-center gap-3">
 				<Film className="w-10 h-10 text-primary" />
-				<h1 className="text-md md:text-4xl lg:text-6xl font-bold whitespace-nowrap">
-					Movie Roulette
-				</h1>
+				<h1 className="text-md md:text-4xl lg:text-6xl font-bold text-balance">Movie Roulette</h1>
 			</div>
 			<div className="flex items-center gap-3">
 				{queueButton && <div>{queueButton}</div>}
