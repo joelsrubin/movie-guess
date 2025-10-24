@@ -9,7 +9,9 @@
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
 		"format": "biome format --write .",
-		"format:check": "biome format ."
+		"format:check": "biome format .",
+		"test": "playwright test",
+		"test:ui": "playwright test --ui"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3.10.0",
@@ -69,6 +71,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.2.6",
+		"@playwright/test": "^1.56.1",
 		"@tailwindcss/postcss": "^4.1.9",
 		"@types/lodash.debounce": "^4.0.9",
 		"@types/node": "^22",
