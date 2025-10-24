@@ -1,5 +1,5 @@
 import { useYearParams } from "@/hooks/use-year-params"
-import { Slider } from "./ui/slider"
+import { Slider } from "../ui/slider"
 
 export function YearSlider() {
 	const [params, setParams] = useYearParams()
