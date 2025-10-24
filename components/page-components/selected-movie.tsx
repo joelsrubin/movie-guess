@@ -3,9 +3,9 @@
 import { useIsMutating, useQuery } from "@tanstack/react-query"
 import Image from "next/image"
 import { movieKeys } from "@/lib/query-keys"
-import type { Movie } from "./movie-roulette"
+import type { Movie } from "../movie-roulette"
+import { Badge } from "../ui/badge"
 import { NoImage } from "./no-image"
-import { Badge } from "./ui/badge"
 
 export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSpinning: boolean }) {
 	const { data: selectedMovie } = useQuery({

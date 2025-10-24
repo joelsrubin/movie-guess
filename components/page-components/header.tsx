@@ -3,9 +3,9 @@
 import { Film, Share } from "lucide-react"
 import { toast } from "sonner"
 import { useWindowSize } from "@/hooks/use-window-size"
+import { Button } from "../ui/button"
+import { ButtonGroup } from "../ui/button-group"
 import { ModeToggle } from "./mode-toggle"
-import { Button } from "./ui/button"
-import { ButtonGroup } from "./ui/button-group"
 
 interface HeaderProps {
 	queueButton?: React.ReactNode

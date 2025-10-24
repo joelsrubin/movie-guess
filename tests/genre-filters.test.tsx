@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { describe, expect, test, vi } from "vitest"
-import { GenreFilters } from "@/components/genre-filters"
+import { GenreFilters } from "@/components/filters/genre-filters"
 
 describe("GenreFilters", () => {
 	test("renders all genre buttons", () => {

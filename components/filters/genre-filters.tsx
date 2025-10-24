@@ -2,7 +2,7 @@
 
 import { genreMap } from "@/lib/constants"
 
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 
 export const allGenres = [
 	"Action",

@@ -1,6 +1,6 @@
 "use client"
 import { PlusCircle, TriangleAlert } from "lucide-react"
-import { Empty, EmptyDescription, EmptyMedia } from "./ui/empty"
+import { Empty, EmptyDescription, EmptyMedia } from "../ui/empty"
 
 export function NoImage({ variant = "error" }: { variant?: "error" | "default" }) {
 	const errorContent = (
