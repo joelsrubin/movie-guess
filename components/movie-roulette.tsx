@@ -213,7 +213,6 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 								<div className="space-y-8">
 									<div className="min-h-[200px] flex items-center justify-center">
 										<SelectedMovie
-											key={selectedMovie?.id}
 											selectedMovie={selectedMovie}
 											setIsSpinning={setIsSpinning}
 											isSpinning={isSpinning}

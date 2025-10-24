@@ -1,3 +1,4 @@
+import Image from "next/image"
 import type { Movie } from "./movie-roulette"
 import { NoImage } from "./no-image"
 import { Badge } from "./ui/badge"
@@ -22,14 +23,16 @@ export function SelectedMovie({
 						rel="noopener noreferrer"
 						className="inline-flex items-center gap-2 text-primary hover:underline"
 					>
-						{/* biome-ignore lint: nextjs image tag sucks*/}
-						<img
+						<Image
 							key={selectedMovie.id}
 							onError={() => setIsSpinning(false)}
 							onLoad={() => setIsSpinning(false)}
 							src={selectedMovie.poster}
 							alt={`${selectedMovie.title} poster`}
-							className={`max-h-[400px] object-contain transition-opacity duration-500 ${isSpinning ? "blur-sm" : ""}`}
+							width={500}
+							height={750}
+							className={`max-h-[400px] w-auto object-contain transition-all duration-500 ${isSpinning ? "blur-sm opacity-50" : "blur-0 opacity-100"}`}
+							priority
 						/>
 					</a>
 				</div>
