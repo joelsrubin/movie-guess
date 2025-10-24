@@ -1,15 +1,21 @@
+"use client"
+
+import { useIsMutating, useQuery } from "@tanstack/react-query"
 import Image from "next/image"
+import { movieKeys } from "@/lib/query-keys"
 import type { Movie } from "./movie-roulette"
 import { NoImage } from "./no-image"
 import { Badge } from "./ui/badge"
 
-export function SelectedMovie({
-	selectedMovie,
-	isSpinning,
-}: {
-	selectedMovie: Movie | null
-	isSpinning: boolean
-}) {
+export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSpinning: boolean }) {
+	const { data: selectedMovie } = useQuery({
+		queryKey: movieKeys.selected(),
+		queryFn: () => defaultData,
+		initialData: defaultData,
+	})
+
+	const isMutating = useIsMutating()
+
 	return selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
 			{selectedMovie.poster ? (
@@ -26,7 +32,7 @@ export function SelectedMovie({
 							alt={`${selectedMovie.title} poster`}
 							width={500}
 							height={750}
-							className={`w-auto object-contain transition-all duration-500 ${isSpinning ? "blur-sm" : ""}`}
+							className={`w-auto object-contain transition-all duration-500 ${isMutating ? "blur-sm" : ""}`}
 							priority
 						/>
 					</a>

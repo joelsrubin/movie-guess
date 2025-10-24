@@ -47,6 +47,7 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 		sort_by: "popularity.desc",
 	})
 
+	console.log({ genreId, genre })
 	if (genreId) {
 		apiParams.append("with_genres", genreId.toString())
 	}

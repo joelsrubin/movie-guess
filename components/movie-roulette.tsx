@@ -1,6 +1,6 @@
 "use client"
 
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Check, ListVideo, PartyPopper, Plus, Sparkles, X } from "lucide-react"
 import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryStates } from "nuqs"
 import { useEffect, useState } from "react"
@@ -28,7 +28,7 @@ export interface Movie {
 }
 
 export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
-	const [selectedMovie, setSelectedMovie] = useState<Movie | null>(defaultData)
+	const queryClient = useQueryClient()
 	const [params, setParams] = useQueryStates({
 		genres: parseAsArrayOf(parseAsString).withDefault([]),
 		year_start: parseAsInteger.withDefault(new Date().getFullYear()),
@@ -59,6 +59,8 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 		loadQueue()
 	}, [])
 
+	const selectedMovie = queryClient.getQueryData<Movie | null>(movieKeys.selected()) ?? defaultData
+
 	const handleAddToQueue = () => {
 		if (selectedMovie && !queue.find((m) => m.id === selectedMovie.id)) {
 			const updated = [...queue, selectedMovie]
@@ -81,7 +83,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 			yearEnd: params.year_end,
 		}),
 		onSuccess: (movie) => {
-			setSelectedMovie(movie)
+			queryClient.setQueryData(movieKeys.selected(), movie)
 			setParams({ movieId: movie.id })
 		},
 	})
@@ -91,8 +93,8 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 			genres: params.genres,
 			yearStart: params.year_start,
 			yearEnd: params.year_end,
-			genre: overrides.genre,
-			year: overrides.year,
+			genre: overrides.genre ?? params.genres[0],
+			year: overrides.year ?? params.year_start,
 		})
 	}
 
@@ -142,7 +144,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 							<Card className="w-full max-w-sm md:max-w-lg">
 								<div className="space-y-8">
 									<div className="min-h-[200px] flex items-center justify-center">
-										<SelectedMovie selectedMovie={selectedMovie} isSpinning={isSpinning} />
+										<SelectedMovie defaultData={defaultData} isSpinning={isSpinning} />
 									</div>
 
 									<div className="flex justify-center">
@@ -163,7 +165,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 											</Button>
 											<Button
 												variant="outline"
-												onClick={() => fetchMovie({})}
+												onClick={() => handleSpin()}
 												disabled={isSpinning}
 												className="min-w-[155px]"
 											>
