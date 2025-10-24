@@ -58,7 +58,7 @@ export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSp
 					</div>
 					<p className="text-xl md:text-2xl text-muted-foreground">{selectedMovie.year}</p>
 				</div>
-				<CollapsibleContent className="max-w-2xl mx-auto px-4">
+				<CollapsibleContent className="max-w-2xl mx-auto px-4 pb-4">
 					<p className="text-muted-foreground text-sm text-balance">{selectedMovie.blurb}</p>
 				</CollapsibleContent>
 				<div className="flex flex-wrap gap-2 justify-center">

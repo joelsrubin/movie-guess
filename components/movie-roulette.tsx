@@ -189,7 +189,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 								</div>
 							</Card>
 						</div>
-						<div className="space-y-6">
+						<div className="space-y-6 mb-10 pb-safe">
 							<div className="text-center text-sm text-muted-foreground pt-4">
 								<div className="flex items-center gap-2 flex-wrap">
 									<span className="text-sm text-muted-foreground">Active filters:</span>
@@ -213,19 +213,17 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 									)}
 								</div>
 							</div>
+							{/* Year Range Filter */}
+							<YearSlider />
 							{/* Genre Filters */}
 							<GenreFilters
 								selectedGenres={params.genres as string[]}
 								onGenresChange={(genres) => setParams({ genres })}
 							/>
-
-							{/* Year Range Filter */}
-							<YearSlider />
 						</div>
 					</div>
 				</div>
 			</div>
-			<footer className="pb-safe" />
 		</>
 	)
 }
