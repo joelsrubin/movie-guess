@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
-import { describe, test, expect, vi, beforeEach } from "vitest"
+import { beforeEach, describe, expect, test, vi } from "vitest"
+import type { Movie } from "@/components/movie-roulette"
 import { MovieRoulette } from "@/components/movie-roulette"
 import { MockProviders } from "./mock-providers"
-import type { Movie } from "@/components/movie-roulette"
 
 vi.mock("@/lib/api", () => ({
 	fetchRandomMovie: vi.fn(() =>

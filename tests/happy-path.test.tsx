@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react"
-import { describe, test, expect } from "vitest"
+import { describe, expect, test } from "vitest"
 import { MovieRoulette } from "@/components/movie-roulette"
 import { MockProviders } from "./mock-providers"
 
