@@ -1,6 +1,9 @@
 import { useYearParams } from "@/hooks/use-year-params"
 import { Slider } from "../ui/slider"
 
+const MIN_YEAR = 1940
+const MAX_YEAR = new Date().getFullYear()
+
 export function YearSlider() {
 	const [params, setParams] = useYearParams()
 
@@ -15,10 +18,10 @@ export function YearSlider() {
 				</span>
 			</div>
 			<Slider
-				min={1940}
-				max={new Date().getFullYear()}
+				min={MIN_YEAR}
+				max={MAX_YEAR}
 				step={1}
-				value={[params.year_start || 1940, params.year_end || new Date().getFullYear()]}
+				value={[params.year_start || MIN_YEAR, params.year_end || MAX_YEAR]}
 				onValueChange={(value) => {
 					setParams({ year_start: value[0], year_end: value[1] })
 				}}

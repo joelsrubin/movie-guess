@@ -88,12 +88,16 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	})
 
 	const handleSpin = (overrides: { genre?: string; year?: number } = {}) => {
+		// get a random year between params.year_start and params.year_end
+		const randomYear =
+			Math.floor(Math.random() * (params.year_end - params.year_start + 1)) + params.year_start
+
 		fetchMovie({
 			genres: params.genres,
 			yearStart: params.year_start,
 			yearEnd: params.year_end,
 			genre: overrides.genre ?? params.genres[0],
-			year: overrides.year ?? params.year_start,
+			year: overrides.year ?? randomYear,
 		})
 	}
 
