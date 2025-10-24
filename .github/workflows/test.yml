@@ -32,3 +32,9 @@ jobs:
 
       - name: Run tests
         run: pnpm test
+
+      - name: notify vercel
+        uses: vercel/repository-dispatch/actions/status@v1
+        with:
+          name: "Vercel - movie-guess: test"
+          
