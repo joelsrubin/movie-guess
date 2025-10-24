@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { NuqsAdapter } from "nuqs/adapters/next/app"
 import { Toaster } from "sonner"
@@ -52,8 +53,9 @@ export default function RootLayout({
 						<Toaster position="top-left" />
 					</ThemeProvider>
 					<ReactQueryDevtools initialIsOpen={false} />
-					<SpeedInsights />
 				</QueryClientProvider>
+				<SpeedInsights />
+				<Analytics />
 			</body>
 		</html>
 	)
