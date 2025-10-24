@@ -13,15 +13,15 @@ interface HeaderProps {
 }
 
 export default function Header({ queueButton }: HeaderProps) {
-	const shareLink = async () => {
+	const shareOrCopyToClipboard = async () => {
 		try {
 			await navigator.share({
 				title: "Movie Roulette",
-				text: "Check out this movie roulette!",
 				url: window.location.href,
 			})
 		} catch (_) {
-			toast.error("Failed to share link")
+			navigator.clipboard.writeText(window.location.href)
+			toast.success("Copied to clipboard")
 		}
 	}
 
@@ -47,7 +47,7 @@ export default function Header({ queueButton }: HeaderProps) {
 				{queueButton && <div>{queueButton}</div>}
 				<ButtonGroup>
 					<ModeToggle />
-					<Button variant="outline" size="icon" onClick={shareLink}>
+					<Button variant="outline" size="icon" onClick={shareOrCopyToClipboard}>
 						<Share />
 					</Button>
 				</ButtonGroup>
