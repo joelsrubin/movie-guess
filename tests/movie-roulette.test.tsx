@@ -32,7 +32,7 @@ describe("MovieRoulette", () => {
 		expect(screen.getByRole("button", { name: /spin/i })).toBeInTheDocument()
 	})
 
-	test("renders with default movie data", () => {
+	test("renders with default movie data", async () => {
 		const movie: Movie = {
 			title: "The Matrix",
 			year: 1999,
@@ -48,7 +48,9 @@ describe("MovieRoulette", () => {
 			</MockProviders>,
 		)
 
-		expect(screen.getByText("The Matrix")).toBeInTheDocument()
+		await waitFor(() => {
+			expect(screen.getByText("The Matrix")).toBeInTheDocument()
+		})
 	})
 
 	test("displays genre filters", () => {
