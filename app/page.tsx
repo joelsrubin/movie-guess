@@ -102,11 +102,11 @@ export default async function Home({
 		return null
 	}
 	const movie = await fetchMovieFromUrl()
-	const providers = await fetchProviders()
+	// const providers = await fetchProviders()
 
 	return (
 		<>
-			<MovieRoulette defaultData={movie} providers={providers.slice(0, 10)} />
+			<MovieRoulette defaultData={movie} />
 			<footer className="text-center text-sm text-muted-foreground">
 				provider data sourced from JustWatch
 			</footer>

@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Check, ListVideo, PartyPopper, Plus, Sparkles, X } from "lucide-react"
 import { parseAsArrayOf, parseAsInteger, parseAsString, throttle, useQueryStates } from "nuqs"
 import { useEffect, useState } from "react"
-import type { WatchProviders } from "@/app/page"
+
 import { allGenres } from "@/components/filters/genre-filters"
 import { QueueModal } from "@/components/modals/queue-modal"
 import { Badge } from "@/components/ui/badge"
@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/card"
 import { fetchRandomMovie } from "@/lib/api"
 import { QUEUE_STORAGE_KEY } from "@/lib/constants"
 import { movieKeys } from "@/lib/query-keys"
+import { providers } from "./filters/providers-toggle-group"
 import Header from "./page-components/header"
 import { SelectedMovie } from "./page-components/selected-movie"
 import { ButtonGroup } from "./ui/button-group"
@@ -27,13 +28,7 @@ export interface Movie {
 	blurb: string
 }
 
-export function MovieRoulette({
-	defaultData,
-	providers,
-}: {
-	defaultData: Movie | null
-	providers: WatchProviders
-}) {
+export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	const queryClient = useQueryClient()
 	const [params, setParams] = useQueryStates(
 		{
@@ -150,7 +145,6 @@ export function MovieRoulette({
 	return (
 		<>
 			<Header
-				providers={providers}
 				queueButton={
 					<QueueModal
 						movies={queue}

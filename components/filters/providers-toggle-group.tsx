@@ -1,10 +1,10 @@
 import Image from "next/image"
-import type { WatchProviders } from "@/app/page"
+
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useProvidersParams } from "@/hooks/use-query-state-helpers"
 import { TMDB_IMAGE_BASE } from "@/lib/constants"
 
-const providers = [
+export const providers = [
 	{
 		logo: "/zLYr7OPvpskMA4S79E3vlCi71iC.jpg",
 		name: "Tubi TV",

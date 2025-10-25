@@ -26,7 +26,7 @@ describe("MovieRoulette", () => {
 	test("renders spin button", () => {
 		render(
 			<MockProviders>
-				<MovieRoulette defaultData={null} providers={[]} />
+				<MovieRoulette defaultData={null} />
 			</MockProviders>,
 		)
 		expect(screen.getByRole("button", { name: /spin/i })).toBeInTheDocument()
@@ -45,7 +45,7 @@ describe("MovieRoulette", () => {
 
 		render(
 			<MockProviders>
-				<MovieRoulette defaultData={movie} providers={[]} />
+				<MovieRoulette defaultData={movie} />
 			</MockProviders>,
 		)
 
@@ -57,7 +57,7 @@ describe("MovieRoulette", () => {
 	test("shows random button", () => {
 		render(
 			<MockProviders>
-				<MovieRoulette defaultData={null} providers={[]} />
+				<MovieRoulette defaultData={null} />
 			</MockProviders>,
 		)
 
@@ -67,7 +67,7 @@ describe("MovieRoulette", () => {
 	test("shows queue button", () => {
 		render(
 			<MockProviders>
-				<MovieRoulette defaultData={null} providers={[]} />
+				<MovieRoulette defaultData={null} />
 			</MockProviders>,
 		)
 
@@ -88,7 +88,7 @@ describe("MovieRoulette", () => {
 
 		render(
 			<MockProviders>
-				<MovieRoulette defaultData={movie} providers={[]} />
+				<MovieRoulette defaultData={movie} />
 			</MockProviders>,
 		)
 
