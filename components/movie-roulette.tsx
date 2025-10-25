@@ -97,7 +97,6 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 			genres: params.genres,
 			yearStart: params.year_start,
 			yearEnd: params.year_end,
-			genre: overrides.genre ?? params.genres[0],
 			year: overrides.year ?? randomYear,
 		})
 	}
@@ -142,7 +141,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 				}
 			/>
 			<div className="container flex justify-center items-center mx-auto">
-				<div className="mx-auto px-4 py-2 md:min-w-[80vw] min-w-[90vw]">
+				<div className="mx-auto px-2 py-2 md:min-w-[80vw] min-w-[90vw]">
 					<div className="max-w-4xl mx-auto ">
 						<div className="flex justify-center items-center pt-4">
 							<Card className="w-full max-w-sm md:max-w-lg">

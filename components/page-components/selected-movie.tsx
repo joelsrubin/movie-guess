@@ -6,7 +6,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { movieKeys } from "@/lib/query-keys"
 import type { Movie } from "../movie-roulette"
-import { Badge } from "../ui/badge"
+
 import { Button } from "../ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible"
 import { NoImage } from "./no-image"
@@ -24,7 +24,7 @@ export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSp
 	return selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
 			{selectedMovie.poster ? (
-				<div className="flex justify-center pb-8 relative min-h-[400px]">
+				<div className="flex justify-center pb-2 relative ">
 					<a
 						href={`https://www.imdb.com/title/${selectedMovie.imdb_id}`}
 						target="_blank"
@@ -61,13 +61,6 @@ export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSp
 				<CollapsibleContent className="max-w-2xl mx-auto px-4 pb-4">
 					<p className="text-muted-foreground text-sm text-balance">{selectedMovie.blurb}</p>
 				</CollapsibleContent>
-				<div className="flex flex-wrap gap-2 justify-center">
-					{selectedMovie.genres.map((genre) => (
-						<Badge key={genre} variant="outline" className="text-sm px-3 py-1">
-							{genre}
-						</Badge>
-					))}
-				</div>
 			</Collapsible>
 		</div>
 	) : (

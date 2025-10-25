@@ -23,16 +23,11 @@ export interface FetchMovieParams {
 	genres?: string[]
 	yearStart?: number
 	yearEnd?: number
-	genre?: string
 	year?: number
 }
 
 export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie> {
-	const { genres, yearStart, yearEnd, genre, year } = params
-
-	const randomGenre =
-		genre ||
-		(genres && genres.length > 0 ? genres[Math.floor(Math.random() * genres.length)] : null)
+	const { genres, yearStart, yearEnd, year } = params
 
 	let randomYear = year
 	if (!randomYear && yearStart && yearEnd) {
@@ -40,7 +35,8 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 		randomYear = yearStart + Math.floor(Math.random() * (yearDiff + 1))
 	}
 
-	const genreId = randomGenre && randomGenre in genreMap ? genreMap[randomGenre] : null
+	const genreIds = genres?.map((g) => genreMap[g])
+	console.log({ genreIds })
 
 	const apiParams = new URLSearchParams({
 		api_key: API_KEY,
@@ -48,8 +44,10 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 		include_adult: "false",
 	})
 
-	if (genreId) {
-		apiParams.append("with_genres", genreId.toString())
+	if (genreIds?.length) {
+		const genreList = genreIds.join(",")
+		console.log({ genreList })
+		apiParams.append("with_genres", encodeURIComponent(genreList))
 	}
 
 	const currentYear = new Date().getFullYear()
