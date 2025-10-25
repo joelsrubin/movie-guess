@@ -24,9 +24,10 @@ export const metadata: Metadata = {
 	title: "Movie Roulette",
 	description: "Grab a flick!",
 	icons: {
-		icon: "/clapper.png",
+		icon: "https://fav.farm/🎬",
 		apple: "/clapper.png",
 	},
+
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: "black-translucent",
