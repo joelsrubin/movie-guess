@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Check, ListVideo, PartyPopper, Plus, Sparkles, X } from "lucide-react"
-import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryStates } from "nuqs"
+import { parseAsArrayOf, parseAsFloat, parseAsInteger, parseAsString, useQueryStates } from "nuqs"
 import { useEffect, useState } from "react"
 import { allGenres } from "@/components/filters/genre-filters"
 
@@ -34,6 +34,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 		year_start: parseAsInteger.withDefault(new Date().getFullYear()),
 		year_end: parseAsInteger.withDefault(new Date().getFullYear()),
 		movieId: parseAsInteger,
+		rating: parseAsInteger.withDefault(50),
 	})
 
 	const [queue, setQueue] = useState<Movie[]>([])
@@ -81,6 +82,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 			genres: params.genres,
 			yearStart: params.year_start,
 			yearEnd: params.year_end,
+			rating: params.rating,
 		}),
 		onSuccess: (movie) => {
 			queryClient.setQueryData(movieKeys.selected(), movie)
@@ -88,16 +90,17 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 		},
 	})
 
-	const handleSpin = (overrides: { genre?: string; year?: number } = {}) => {
+	const handleSpin = (overrides: { genre?: string[]; year?: number; rating?: number } = {}) => {
 		// get a random year between params.year_start and params.year_end
 		const randomYear =
 			Math.floor(Math.random() * (params.year_end - params.year_start + 1)) + params.year_start
 
 		fetchMovie({
-			genres: params.genres,
+			genres: overrides.genre ?? params.genres,
 			yearStart: params.year_start,
 			yearEnd: params.year_end,
 			year: overrides.year ?? randomYear,
+			rating: overrides.rating ?? params.rating,
 		})
 	}
 
@@ -112,13 +115,15 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	const handleRandom = () => {
 		const randomGenre = allGenres[Math.floor(Math.random() * allGenres.length)]
 		const randomYear = availableYears[Math.floor(Math.random() * availableYears.length)]
+
 		setParams({
 			genres: [randomGenre],
 			year_start: randomYear,
 			year_end: randomYear,
+			rating: 50,
 		})
 
-		handleSpin({ genre: randomGenre, year: randomYear })
+		handleSpin({ genre: [randomGenre], year: randomYear, rating: 50 })
 	}
 
 	return (

@@ -1,6 +1,6 @@
 "use client"
 
-import { useGenreParams } from "@/hooks/use-genre-params"
+import { useGenreParams } from "@/hooks/use-query-state-helpers"
 import { genreMap } from "@/lib/constants"
 import { Button } from "../ui/button"
 

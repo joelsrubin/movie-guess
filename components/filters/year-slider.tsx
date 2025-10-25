@@ -1,4 +1,4 @@
-import { useYearParams } from "@/hooks/use-year-params"
+import { useYearParams } from "@/hooks/use-query-state-helpers"
 import { Slider } from "../ui/slider"
 
 const MIN_YEAR = 1940
@@ -17,16 +17,20 @@ export function YearSlider() {
 						: `${params.year_start}–${params.year_end}`}
 				</span>
 			</div>
-			<Slider
-				min={MIN_YEAR}
-				max={MAX_YEAR}
-				step={1}
-				value={[params.year_start || MIN_YEAR, params.year_end || MAX_YEAR]}
-				onValueChange={(value) => {
-					setParams({ year_start: value[0], year_end: value[1] })
-				}}
-				className="w-full"
-			/>
+			<div className="flex flex-row justify-between items-center">
+				<span className="text-sm font-semibold">{MIN_YEAR}</span>
+				<Slider
+					min={MIN_YEAR}
+					max={MAX_YEAR}
+					step={1}
+					value={[params.year_start || MIN_YEAR, params.year_end || MAX_YEAR]}
+					onValueChange={(value) => {
+						setParams({ year_start: value[0], year_end: value[1] })
+					}}
+					className="w-[80%]"
+				/>
+				<span className="text-sm font-semibold">{MAX_YEAR}</span>
+			</div>
 		</div>
 	)
 }
