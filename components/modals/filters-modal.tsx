@@ -14,7 +14,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog"
 import { GenreFilters } from "../filters/genre-filters"
-import { PopularitySlider } from "../filters/popularity-slider"
+
 import { YearSlider } from "../filters/year-slider"
 import { Separator } from "../ui/separator"
 
@@ -33,12 +33,10 @@ export function FiltersModal() {
 			>
 				<DialogHeader className="sticky">
 					<DialogTitle>Filters</DialogTitle>
+					<Separator />
 				</DialogHeader>
-				<Separator />
 				<div className="flex flex-col space-y-10 overflow-scroll">
 					<GenreFilters />
-					<Separator />
-					<PopularitySlider />
 					<Separator />
 					<YearSlider />
 					<Separator />

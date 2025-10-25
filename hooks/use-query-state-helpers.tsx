@@ -18,12 +18,3 @@ export const useGenreParams = () => {
 		{ shallow: false, limitUrlUpdates: throttle(1000) },
 	)
 }
-
-export const useRatingParams = () => {
-	return useQueryStates(
-		{
-			rating: parseAsInteger.withDefault(50),
-		},
-		{ shallow: false, limitUrlUpdates: throttle(1000) },
-	)
-}

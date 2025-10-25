@@ -24,11 +24,10 @@ export interface FetchMovieParams {
 	yearStart?: number
 	yearEnd?: number
 	year?: number
-	rating?: number
 }
 
 export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie> {
-	const { genres, yearStart, yearEnd, year, rating } = params
+	const { genres, yearStart, yearEnd, year } = params
 
 	let randomYear = year
 	if (!randomYear && yearStart && yearEnd) {
@@ -48,11 +47,6 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 	if (genreIds?.length) {
 		const genreList = genreIds.join(",")
 		apiParams.append("with_genres", encodeURIComponent(genreList))
-	}
-
-	if (rating) {
-		const decimal = rating / 10
-		apiParams.append("vote_average.gte", decimal.toString())
 	}
 
 	const currentYear = new Date().getFullYear()
