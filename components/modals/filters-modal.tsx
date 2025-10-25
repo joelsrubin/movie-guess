@@ -1,7 +1,6 @@
 "use client"
 
 import { FilterIcon } from "lucide-react"
-import type { WatchProviders } from "@/app/page"
 import { Button } from "@/components/ui/button"
 import {
 	Dialog,
@@ -17,7 +16,7 @@ import { ProvidersToggleGroup } from "../filters/providers-toggle-group"
 import { YearSlider } from "../filters/year-slider"
 import { Separator } from "../ui/separator"
 
-export function FiltersModal({ providers }: { providers?: WatchProviders }) {
+export function FiltersModal() {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -37,7 +36,7 @@ export function FiltersModal({ providers }: { providers?: WatchProviders }) {
 				<div className="flex flex-col space-y-10 overflow-scroll">
 					<GenreFilters />
 					<Separator />
-					<ProvidersToggleGroup providers={providers} />
+					<ProvidersToggleGroup />
 					<Separator />
 					<YearSlider />
 					<Separator />

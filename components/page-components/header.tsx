@@ -38,7 +38,7 @@ export default function Header({ queueButton, providers }: HeaderProps) {
 			</div>
 			<div className="flex items-center gap-3">
 				{queueButton && <div>{queueButton}</div>}
-				<FiltersModal providers={providers} />
+				<FiltersModal />
 				<ButtonGroup>
 					<ModeToggle />
 					<Button variant="outline" size="icon" onClick={shareOrCopyToClipboard}>

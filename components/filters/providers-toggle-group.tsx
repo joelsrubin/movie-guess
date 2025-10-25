@@ -4,9 +4,60 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useProvidersParams } from "@/hooks/use-query-state-helpers"
 import { TMDB_IMAGE_BASE } from "@/lib/constants"
 
-export function ProvidersToggleGroup({ providers }: { providers?: WatchProviders }) {
+const providers = [
+	{
+		logo: "/zLYr7OPvpskMA4S79E3vlCi71iC.jpg",
+		name: "Tubi TV",
+		id: "73",
+	},
+	{
+		logo: "/pbpMk2JmcoNnQwx5JGpXngfoWtp.jpg",
+		name: "Netflix",
+		id: "8",
+	},
+	{
+		logo: "/97yvRBw1GzX7fXprcF80er19ot.jpg",
+		name: "Disney Plus",
+		id: "337",
+	},
+	{
+		logo: "/pvske1MyAoymrs5bguRfVqYiM9a.jpg",
+		name: "Amazon Prime Video",
+		id: "9",
+	},
+	{
+		logo: "/2E03IAZsX4ZaUqM7tXlctEPMGWS.jpg",
+		name: "Apple TV+",
+		id: "350",
+	},
+	{
+		logo: "/seGSXajazLMCKGB5hnRCidtjay1.jpg",
+		name: "Amazon Video",
+		id: "10",
+	},
+	{
+		logo: "/oMYZg3cGAGp9ecKGlBgumcjDmnN.jpg",
+		name: "Apple TV",
+		id: "2",
+	},
+	{
+		logo: "/bxBlRPEPpMVDc4jMhSrTf2339DW.jpg",
+		name: "Hulu",
+		id: "15",
+	},
+	{
+		logo: "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
+		name: "Crunchyroll",
+		id: "283",
+	},
+	{
+		logo: "/9BgaNQRMDvVlji1JBZi6tcfxpKx.jpg",
+		name: "fuboTV",
+		id: "257",
+	},
+]
+export function ProvidersToggleGroup() {
 	const [params, setParams] = useProvidersParams()
-
 	return (
 		<>
 			<h2 className="text-sm font-semibold text-foreground mb-0">Providers</h2>
