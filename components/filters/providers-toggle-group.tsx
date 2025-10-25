@@ -10,7 +10,7 @@ export function ProvidersToggleGroup({ providers }: { providers?: WatchProviders
 	return (
 		<>
 			<h2 className="text-sm font-semibold text-foreground mb-0">Providers</h2>
-			<div className="overflow-x-scroll">
+			<div className="overflow-x-scroll -mx-4 px-4">
 				<ToggleGroup
 					type="multiple"
 					variant="outline"
