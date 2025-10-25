@@ -33,6 +33,7 @@ export function FiltersModal() {
 				<DialogHeader>
 					<DialogTitle>Filters</DialogTitle>
 				</DialogHeader>
+				<Separator />
 				<div className="flex flex-col space-y-10">
 					<GenreFilters />
 					<Separator />

@@ -32,7 +32,7 @@ export function GenreFilters() {
 
 	return (
 		<div className="space-y-3">
-			<h2 className="text-sm font-semibold text-foreground">Filter by Genre</h2>
+			<h2 className="text-sm font-semibold text-foreground">Genre</h2>
 			<div className="flex gap-2 flex-wrap">
 				{Object.keys(genreMap).map((genre) => (
 					<Button

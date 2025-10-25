@@ -10,7 +10,7 @@ export function YearSlider() {
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
-				<h2 className="text-sm font-semibold text-foreground">Filter by Year</h2>
+				<h2 className="text-sm font-semibold text-foreground">Year</h2>
 				<span className="text-sm text-muted-foreground">
 					{params.year_start === params.year_end
 						? params.year_start
