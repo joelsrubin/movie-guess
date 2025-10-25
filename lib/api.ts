@@ -45,6 +45,7 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 	const apiParams = new URLSearchParams({
 		api_key: API_KEY,
 		sort_by: "popularity.desc",
+		include_adult: "false",
 	})
 
 	if (genreId) {
@@ -73,12 +74,12 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 		throw new Error("No movies found")
 	}
 
-	const randomMovie = data.results[Math.floor(Math.random() * data.results.length)]
+	const detailData = data.results[Math.floor(Math.random() * data.results.length)]
 
-	const detailResponse = await fetch(
-		`https://api.themoviedb.org/3/movie/${randomMovie.id}?api_key=${API_KEY}`,
+	const reverseGenreMap: Record<number, string> = Object.fromEntries(
+		Object.entries(genreMap).map(([name, id]) => [id, name]),
 	)
-	const detailData = await detailResponse.json()
+
 	console.log({ detailData })
 	if (!detailData.id) {
 		throw new Error("Failed to fetch movie details")
@@ -87,29 +88,9 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 	return {
 		title: detailData.title,
 		year: new Date(detailData.release_date).getFullYear(),
-		genres: detailData.genres ? detailData.genres.map((g: { name: string }) => g.name) : [],
-		id: detailData.id,
-		imdb_id: detailData.imdb_id,
-		poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
-		blurb: detailData.overview,
-	}
-}
-
-export async function fetchMovieById(movieId: number): Promise<Movie> {
-	const detailResponse = await fetch(
-		`https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}`,
-		{ cache: "force-cache" },
-	)
-	const detailData = await detailResponse.json()
-
-	if (!detailData.id) {
-		throw new Error("Movie not found")
-	}
-
-	return {
-		title: detailData.title,
-		year: new Date(detailData.release_date).getFullYear(),
-		genres: detailData.genres ? detailData.genres.map((g: { name: string }) => g.name) : [],
+		genres: detailData.genre_ids
+			? detailData.genre_ids.map((id: number) => reverseGenreMap[id]).filter(Boolean)
+			: [],
 		id: detailData.id,
 		imdb_id: detailData.imdb_id,
 		poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",

@@ -1,7 +1,7 @@
 "use client"
 
+import { useGenreParams } from "@/hooks/use-genre-params"
 import { genreMap } from "@/lib/constants"
-
 import { Button } from "../ui/button"
 
 export const allGenres = [
@@ -19,17 +19,14 @@ export const allGenres = [
 	"Thriller",
 ]
 
-interface GenreFiltersProps {
-	selectedGenres: string[]
-	onGenresChange: (genres: string[]) => void
-}
-
-export function GenreFilters({ selectedGenres, onGenresChange }: GenreFiltersProps) {
+export function GenreFilters() {
+	const [params, setParams] = useGenreParams()
+	const selectedGenres = params.genres
 	const toggleGenre = (genre: string) => {
-		if (selectedGenres.includes(genre)) {
-			onGenresChange(selectedGenres.filter((g) => g !== genre))
+		if (params.genres.includes(genre)) {
+			setParams({ genres: params.genres.filter((g) => g !== genre) })
 		} else {
-			onGenresChange([...selectedGenres, genre])
+			setParams({ genres: [...params.genres, genre] })
 		}
 	}
 

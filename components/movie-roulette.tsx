@@ -142,7 +142,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 				}
 			/>
 			<div className="container flex justify-center items-center mx-auto">
-				<div className="mx-auto px-4 py-2">
+				<div className="mx-auto px-4 py-2 md:min-w-[80vw] min-w-[90vw]">
 					<div className="max-w-4xl mx-auto ">
 						<div className="flex justify-center items-center pt-4">
 							<Card className="w-full max-w-sm md:max-w-lg">
@@ -213,13 +213,6 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 									)}
 								</div>
 							</div>
-							{/* Year Range Filter */}
-							<YearSlider />
-							{/* Genre Filters */}
-							<GenreFilters
-								selectedGenres={params.genres as string[]}
-								onGenresChange={(genres) => setParams({ genres })}
-							/>
 						</div>
 					</div>
 				</div>
