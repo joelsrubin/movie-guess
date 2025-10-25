@@ -3,7 +3,7 @@
 import { useIsMutating, useQuery } from "@tanstack/react-query"
 import { ChevronsUpDown } from "lucide-react"
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { movieKeys } from "@/lib/query-keys"
 import type { Movie } from "../movie-roulette"
 
@@ -21,6 +21,13 @@ export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSp
 	const isMutating = useIsMutating()
 	const [isOpen, setIsOpen] = useState(false)
 
+	const [isLoading, setIsLoading] = useState(false)
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <intended>
+	useEffect(() => {
+		setIsLoading(true)
+	}, [selectedMovie])
+
 	return selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
 			{selectedMovie.poster ? (
@@ -36,7 +43,8 @@ export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSp
 							alt={`${selectedMovie.title} poster`}
 							width={500}
 							height={750}
-							className={`w-auto object-contain transition-all duration-500 ${isMutating ? "blur-sm" : ""}`}
+							onLoad={() => setIsLoading(false)}
+							className={`w-auto object-contain transition-all duration-500 ${isMutating || isLoading ? "blur-sm" : ""}`}
 							priority
 						/>
 					</a>
