@@ -63,7 +63,7 @@ export default async function Home({
 	const params = await searchParams
 	const fetchProviders = async (): Promise<WatchProviders> => {
 		const url = `${BASE_URL}/watch/providers/movie?language=en-US&watch_region=US&api_key=${API_KEY}`
-		const providersResponse = await fetch(url, { cache: "force-cache" })
+		const providersResponse = await fetch(url)
 
 		const providersData = await providersResponse.json()
 		const formatted = providersData.results
