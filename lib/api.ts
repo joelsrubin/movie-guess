@@ -42,18 +42,16 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 		api_key: API_KEY,
 		sort_by: "popularity.desc",
 		include_adult: "false",
+		with_origin_country: "US",
 	})
 
 	if (genreIds?.length) {
 		const genreList = genreIds.join(",")
-
 		apiParams.append("with_genres", encodeURIComponent(genreList))
 	}
-	console.log({ rating })
+
 	if (rating) {
-		console.log({ rating })
 		const decimal = rating / 10
-		console.log({ decimal })
 		apiParams.append("vote_average.gte", decimal.toString())
 	}
 
@@ -85,7 +83,6 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 		Object.entries(genreMap).map(([name, id]) => [id, name]),
 	)
 
-	console.log({ detailData })
 	if (!detailData.id) {
 		throw new Error("Failed to fetch movie details")
 	}

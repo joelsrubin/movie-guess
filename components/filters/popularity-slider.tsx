@@ -1,4 +1,4 @@
-import { Flame, Frown, ThumbsDown, ThumbsUp } from "lucide-react"
+import { Flame, Frown } from "lucide-react"
 import { useRatingParams } from "@/hooks/use-query-state-helpers"
 import { Slider } from "../ui/slider"
 

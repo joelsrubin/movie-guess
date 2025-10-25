@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Check, ListVideo, PartyPopper, Plus, Sparkles, X } from "lucide-react"
-import { parseAsArrayOf, parseAsFloat, parseAsInteger, parseAsString, useQueryStates } from "nuqs"
+import { parseAsArrayOf, parseAsInteger, parseAsString, throttle, useQueryStates } from "nuqs"
 import { useEffect, useState } from "react"
 import { allGenres } from "@/components/filters/genre-filters"
 
@@ -29,13 +29,16 @@ export interface Movie {
 
 export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	const queryClient = useQueryClient()
-	const [params, setParams] = useQueryStates({
-		genres: parseAsArrayOf(parseAsString).withDefault([]),
-		year_start: parseAsInteger.withDefault(new Date().getFullYear()),
-		year_end: parseAsInteger.withDefault(new Date().getFullYear()),
-		movieId: parseAsInteger,
-		rating: parseAsInteger.withDefault(50),
-	})
+	const [params, setParams] = useQueryStates(
+		{
+			genres: parseAsArrayOf(parseAsString).withDefault([]),
+			year_start: parseAsInteger.withDefault(new Date().getFullYear()),
+			year_end: parseAsInteger.withDefault(new Date().getFullYear()),
+			movieId: parseAsInteger,
+			rating: parseAsInteger.withDefault(50),
+		},
+		{ shallow: false, limitUrlUpdates: throttle(1000) },
+	)
 
 	const [queue, setQueue] = useState<Movie[]>([])
 
