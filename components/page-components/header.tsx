@@ -2,7 +2,7 @@
 
 import { Film, Share } from "lucide-react"
 import { toast } from "sonner"
-
+import type { WatchProviders } from "@/app/page"
 import { useWindowSize } from "@/hooks/use-window-size"
 import { FiltersModal } from "../modals/filters-modal"
 import { Button } from "../ui/button"
@@ -12,9 +12,10 @@ import { ModeToggle } from "./mode-toggle"
 interface HeaderProps {
 	queueButton?: React.ReactNode
 	queueCount?: number
+	providers?: WatchProviders
 }
 
-export default function Header({ queueButton }: HeaderProps) {
+export default function Header({ queueButton, providers }: HeaderProps) {
 	const shareOrCopyToClipboard = async () => {
 		try {
 			await navigator.share({
@@ -37,7 +38,7 @@ export default function Header({ queueButton }: HeaderProps) {
 			</div>
 			<div className="flex items-center gap-3">
 				{queueButton && <div>{queueButton}</div>}
-				<FiltersModal />
+				<FiltersModal providers={providers} />
 				<ButtonGroup>
 					<ModeToggle />
 					<Button variant="outline" size="icon" onClick={shareOrCopyToClipboard}>

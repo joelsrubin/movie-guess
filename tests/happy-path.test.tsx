@@ -7,7 +7,7 @@ describe("Movie Roulette", () => {
 	test("should render the page", () => {
 		render(
 			<MockProviders>
-				<MovieRoulette defaultData={null} />
+				<MovieRoulette defaultData={null} providers={[]} />
 			</MockProviders>,
 		)
 		expect(screen.getByRole("button", { name: /spin/i })).toBeInTheDocument()

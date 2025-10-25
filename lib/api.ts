@@ -24,10 +24,11 @@ export interface FetchMovieParams {
 	yearStart?: number
 	yearEnd?: number
 	year?: number
+	providers?: string[]
 }
 
 export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie> {
-	const { genres, yearStart, yearEnd, year } = params
+	const { genres, yearStart, yearEnd, year, providers } = params
 
 	let randomYear = year
 	if (!randomYear && yearStart && yearEnd) {
@@ -42,6 +43,7 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 		sort_by: "popularity.desc",
 		include_adult: "false",
 		with_origin_country: "US",
+		watch_region: "US",
 	})
 
 	if (genreIds?.length) {
@@ -60,6 +62,12 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 		randomYear || availableYears[Math.floor(Math.random() * availableYears.length)]
 	if (yearToSearch) {
 		apiParams.append("primary_release_year", yearToSearch.toString())
+	}
+
+	if (providers?.length) {
+		const providerList = providers.join("|")
+		const encoded = encodeURIComponent(providerList)
+		apiParams.append("with_watch_providers", encoded)
 	}
 
 	const response = await fetch(

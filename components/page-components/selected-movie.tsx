@@ -1,8 +1,9 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
+import { useMutationState, useQuery } from "@tanstack/react-query"
 import { ChevronsUpDown } from "lucide-react"
 import Image from "next/image"
+import { parseAsArrayOf, parseAsInteger, parseAsString, throttle, useQueryStates } from "nuqs"
 import { useEffect, useState } from "react"
 import { movieKeys } from "@/lib/query-keys"
 import type { Movie } from "../movie-roulette"
@@ -33,7 +34,32 @@ export function SelectedMovie({
 		}
 	}, [isSpinning])
 
-	return selectedMovie ? (
+	const [params] = useQueryStates(
+		{
+			genres: parseAsArrayOf(parseAsString).withDefault([]),
+			year_start: parseAsInteger.withDefault(new Date().getFullYear()),
+			year_end: parseAsInteger.withDefault(new Date().getFullYear()),
+			movieId: parseAsInteger,
+			providers: parseAsArrayOf(parseAsString).withDefault([]),
+		},
+		{ shallow: false, limitUrlUpdates: throttle(1000) },
+	)
+	const mutationState = useMutationState({
+		filters: {
+			mutationKey: movieKeys.random({
+				genres: params.genres,
+				yearStart: params.year_start,
+				yearEnd: params.year_end,
+				providers: params.providers,
+			}),
+		},
+	})
+	console.log(mutationState)
+	const hasError = mutationState[0]?.status === "error"
+	console.log({ hasError })
+	return hasError ? (
+		<NoImage variant="error" />
+	) : selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
 			{selectedMovie.poster ? (
 				<div className="flex justify-center pb-2 relative ">

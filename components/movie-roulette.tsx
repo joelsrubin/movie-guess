@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Check, ListVideo, PartyPopper, Plus, Sparkles, X } from "lucide-react"
 import { parseAsArrayOf, parseAsInteger, parseAsString, throttle, useQueryStates } from "nuqs"
 import { useEffect, useState } from "react"
+import type { WatchProviders } from "@/app/page"
 import { allGenres } from "@/components/filters/genre-filters"
-
 import { QueueModal } from "@/components/modals/queue-modal"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -27,7 +27,13 @@ export interface Movie {
 	blurb: string
 }
 
-export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
+export function MovieRoulette({
+	defaultData,
+	providers,
+}: {
+	defaultData: Movie | null
+	providers: WatchProviders
+}) {
 	const queryClient = useQueryClient()
 	const [params, setParams] = useQueryStates(
 		{
@@ -35,6 +41,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 			year_start: parseAsInteger.withDefault(new Date().getFullYear()),
 			year_end: parseAsInteger.withDefault(new Date().getFullYear()),
 			movieId: parseAsInteger,
+			providers: parseAsArrayOf(parseAsString).withDefault([]),
 		},
 		{ shallow: false, limitUrlUpdates: throttle(1000) },
 	)
@@ -78,12 +85,17 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 		localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(updated))
 	}
 
-	const { mutate: fetchMovie, isPending: isSpinning } = useMutation({
+	const {
+		mutate: fetchMovie,
+		isPending: isSpinning,
+		reset,
+	} = useMutation({
 		mutationFn: fetchRandomMovie,
 		mutationKey: movieKeys.random({
 			genres: params.genres,
 			yearStart: params.year_start,
 			yearEnd: params.year_end,
+			providers: params.providers,
 		}),
 		onSuccess: (movie) => {
 			queryClient.setQueryData(movieKeys.selected(), movie)
@@ -92,6 +104,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	})
 
 	const handleSpin = (overrides: { genre?: string[]; year?: number } = {}) => {
+		reset()
 		// get a random year between params.year_start and params.year_end
 		const randomYear =
 			Math.floor(Math.random() * (params.year_end - params.year_start + 1)) + params.year_start
@@ -101,6 +114,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 			yearStart: params.year_start,
 			yearEnd: params.year_end,
 			year: overrides.year ?? randomYear,
+			providers: params.providers,
 		})
 	}
 
@@ -109,6 +123,14 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 			setParams({ genres: params.genres.filter((g) => g !== genre) })
 		} else {
 			setParams({ genres: [...params.genres, genre] })
+		}
+	}
+
+	const toggleProvider = (provider: string) => {
+		if (params.providers.includes(provider)) {
+			setParams({ providers: params.providers.filter((p) => p !== provider) })
+		} else {
+			setParams({ providers: [...params.providers, provider] })
 		}
 	}
 
@@ -128,6 +150,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 	return (
 		<>
 			<Header
+				providers={providers}
 				queueButton={
 					<QueueModal
 						movies={queue}
@@ -144,7 +167,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 					/>
 				}
 			/>
-			<div className="container flex justify-center items-center mx-auto">
+			<div className="container flex justify-center items-center mx-auto grow max-h-full">
 				<div className="mx-auto px-2 py-2 md:min-w-[80vw] min-w-[90vw]">
 					<div className="max-w-4xl mx-auto ">
 						<div className="flex justify-center items-center pt-4">
@@ -204,6 +227,17 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 											onClick={() => toggleGenre(genre)}
 										>
 											{genre}
+											<X className="size-3" />
+										</Badge>
+									))}
+									{params.providers.map((provider) => (
+										<Badge
+											key={provider}
+											variant="default"
+											// className="gap-1.5 pr-1 cursor-pointer hover:bg-primary/80"
+											onClick={() => toggleProvider(provider)}
+										>
+											{providers.find((p) => p.id === provider)?.name}
 											<X className="size-3" />
 										</Badge>
 									))}

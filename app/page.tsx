@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { MovieRoulette } from "@/components/movie-roulette"
 import { API_KEY, BASE_URL, TMDB_IMAGE_BASE } from "@/lib/constants"
 
-export type WatchProviders = { logo: string; name: string }[]
+export type WatchProviders = { logo: string; name: string; id: string }[]
 export async function generateMetadata({
 	searchParams,
 }: {
@@ -68,9 +68,10 @@ export default async function Home({
 		const providersData = await providersResponse.json()
 		const formatted = providersData.results
 			.slice(0, 100)
-			.map((p: { logo_path: string; provider_name: string }) => ({
+			.map((p: { logo_path: string; provider_name: string; provider_id: string }) => ({
 				logo: p.logo_path,
 				name: p.provider_name,
+				id: p.provider_id.toString(),
 			}))
 		return formatted
 	}
@@ -101,6 +102,14 @@ export default async function Home({
 		return null
 	}
 	const movie = await fetchMovieFromUrl()
-	// const providers = await fetchProviders()
-	return <MovieRoulette defaultData={movie} />
+	const providers = await fetchProviders()
+
+	return (
+		<>
+			<MovieRoulette defaultData={movie} providers={providers.slice(0, 10)} />
+			<footer className="text-center text-sm text-muted-foreground">
+				provider data sourced from JustWatch
+			</footer>
+		</>
+	)
 }

@@ -18,3 +18,12 @@ export const useGenreParams = () => {
 		{ shallow: false, limitUrlUpdates: throttle(1000) },
 	)
 }
+
+export const useProvidersParams = () => {
+	return useQueryStates(
+		{
+			providers: parseAsArrayOf(parseAsString).withDefault([]),
+		},
+		{ shallow: false, limitUrlUpdates: throttle(1000) },
+	)
+}
