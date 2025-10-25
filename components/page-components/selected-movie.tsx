@@ -23,10 +23,11 @@ export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSp
 
 	const [isLoading, setIsLoading] = useState(false)
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <intended>
 	useEffect(() => {
-		setIsLoading(true)
-	}, [selectedMovie])
+		if (isMutating > 0) {
+			setIsLoading(true)
+		}
+	}, [isMutating])
 
 	return selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
