@@ -1,11 +1,4 @@
-import {
-	parseAsArrayOf,
-	parseAsInteger,
-	parseAsString,
-	throttle,
-	useQueryState,
-	useQueryStates,
-} from "nuqs"
+import { parseAsArrayOf, parseAsInteger, parseAsString, throttle, useQueryStates } from "nuqs"
 
 export const useYearParams = () => {
 	return useQueryStates(

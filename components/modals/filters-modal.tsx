@@ -29,13 +29,13 @@ export function FiltersModal() {
 			</DialogTrigger>
 			<DialogContent
 				aria-describedby="queue-modal"
-				className="max-w-3xl max-h-[80vh] flex flex-col overflow-scroll "
+				className="max-w-3xl max-h-[80vh] flex flex-col"
 			>
-				<DialogHeader>
+				<DialogHeader className="sticky">
 					<DialogTitle>Filters</DialogTitle>
 				</DialogHeader>
 				<Separator />
-				<div className="flex flex-col space-y-10">
+				<div className="flex flex-col space-y-10 overflow-scroll">
 					<GenreFilters />
 					<Separator />
 					<PopularitySlider />
