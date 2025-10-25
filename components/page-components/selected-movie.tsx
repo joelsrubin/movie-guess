@@ -1,33 +1,37 @@
 "use client"
 
-import { useIsMutating, useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { ChevronsUpDown } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { movieKeys } from "@/lib/query-keys"
 import type { Movie } from "../movie-roulette"
-
 import { Button } from "../ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible"
 import { NoImage } from "./no-image"
 
-export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSpinning: boolean }) {
+export function SelectedMovie({
+	defaultData,
+	isSpinning,
+}: {
+	defaultData: Movie | null
+	isSpinning: boolean
+}) {
 	const { data: selectedMovie } = useQuery({
 		queryKey: movieKeys.selected(),
 		queryFn: () => defaultData,
 		initialData: defaultData,
 	})
 
-	const isMutating = useIsMutating()
 	const [isOpen, setIsOpen] = useState(false)
 
 	const [isLoading, setIsLoading] = useState(false)
 
 	useEffect(() => {
-		if (isMutating > 0) {
+		if (isSpinning) {
 			setIsLoading(true)
 		}
-	}, [isMutating])
+	}, [isSpinning])
 
 	return selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
@@ -45,7 +49,7 @@ export function SelectedMovie({ defaultData }: { defaultData: Movie | null; isSp
 							width={500}
 							height={750}
 							onLoad={() => setIsLoading(false)}
-							className={`w-auto object-contain transition-all duration-500 ${isMutating || isLoading ? "blur-sm" : ""}`}
+							className={`w-auto object-contain transition-all duration-500 ${isSpinning || isLoading ? "blur-sm" : ""}`}
 							priority
 						/>
 					</a>
