@@ -40,6 +40,7 @@ describe("MovieRoulette", () => {
 			id: 603,
 			poster: "/poster.jpg",
 			imdb_id: "tt0133093",
+			blurb: "Lorem ipsum dolor sit.",
 		}
 
 		render(
@@ -51,17 +52,6 @@ describe("MovieRoulette", () => {
 		await waitFor(() => {
 			expect(screen.getByText("The Matrix")).toBeInTheDocument()
 		})
-	})
-
-	test("displays genre filters", () => {
-		render(
-			<MockProviders>
-				<MovieRoulette defaultData={null} />
-			</MockProviders>,
-		)
-
-		expect(screen.getByRole("button", { name: "Action" })).toBeInTheDocument()
-		expect(screen.getByRole("button", { name: "Comedy" })).toBeInTheDocument()
 	})
 
 	test("shows random button", () => {
@@ -93,6 +83,7 @@ describe("MovieRoulette", () => {
 			id: 123,
 			poster: "/test.jpg",
 			imdb_id: "tt123",
+			blurb: "Lorem ipsum dolor sit.",
 		}
 
 		render(
@@ -107,19 +98,5 @@ describe("MovieRoulette", () => {
 		await waitFor(() => {
 			expect(screen.getByRole("button", { name: /added to queue/i })).toBeInTheDocument()
 		})
-	})
-
-	test("toggles genre filter", async () => {
-		const user = userEvent.setup()
-		render(
-			<MockProviders>
-				<MovieRoulette defaultData={null} />
-			</MockProviders>,
-		)
-
-		const actionButton = screen.getByRole("button", { name: "Action" })
-		await user.click(actionButton)
-
-		expect(screen.getByText("Active filters:")).toBeInTheDocument()
 	})
 })

@@ -1,9 +1,8 @@
 import type { Metadata } from "next"
 import { MovieRoulette } from "@/components/movie-roulette"
+import { API_KEY, BASE_URL, TMDB_IMAGE_BASE } from "@/lib/constants"
 
-const API_KEY = "57f535f358393665753c938201a145cb"
-const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
-
+export type WatchProviders = { logo: string; name: string }[]
 export async function generateMetadata({
 	searchParams,
 }: {
@@ -62,11 +61,24 @@ export default async function Home({
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
 	const params = await searchParams
+	const fetchProviders = async (): Promise<WatchProviders> => {
+		const url = `${BASE_URL}/watch/providers/movie?language=en-US&watch_region=US&api_key=${API_KEY}`
+		const providersResponse = await fetch(url, { cache: "force-cache" })
+
+		const providersData = await providersResponse.json()
+		const formatted = providersData.results
+			.slice(0, 100)
+			.map((p: { logo_path: string; provider_name: string }) => ({
+				logo: p.logo_path,
+				name: p.provider_name,
+			}))
+		return formatted
+	}
 	const fetchMovieFromUrl = async () => {
 		if (params.movieId) {
 			try {
 				const detailResponse = await fetch(
-					`https://api.themoviedb.org/3/movie/${params.movieId}?api_key=${API_KEY}`,
+					`${BASE_URL}/movie/${params.movieId}?api_key=${API_KEY}`,
 					{ cache: "force-cache" },
 				)
 				const detailData = await detailResponse.json()
@@ -89,6 +101,6 @@ export default async function Home({
 		return null
 	}
 	const movie = await fetchMovieFromUrl()
-
+	// const providers = await fetchProviders()
 	return <MovieRoulette defaultData={movie} />
 }

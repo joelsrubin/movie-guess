@@ -2,6 +2,7 @@
 
 import { Film, Share } from "lucide-react"
 import { toast } from "sonner"
+
 import { useWindowSize } from "@/hooks/use-window-size"
 import { FiltersModal } from "../modals/filters-modal"
 import { Button } from "../ui/button"

@@ -3,7 +3,6 @@
 import { FilterIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-
 import {
 	Dialog,
 	DialogClose,
@@ -38,6 +37,8 @@ export function FiltersModal() {
 				<div className="flex flex-col space-y-10 overflow-scroll">
 					<GenreFilters />
 					<Separator />
+					{/* <ProvidersToggleGroup providersList={providersList} /> */}
+					{/* <Separator /> */}
 					<YearSlider />
 					<Separator />
 				</div>
