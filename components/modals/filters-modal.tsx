@@ -1,11 +1,9 @@
 "use client"
 
-import { ChevronLeft, ChevronRight, FilterIcon, Trash2 } from "lucide-react"
-import Image from "next/image"
-import { useState } from "react"
-import { Badge } from "@/components/ui/badge"
+import { FilterIcon } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+
 import {
 	Dialog,
 	DialogClose,
