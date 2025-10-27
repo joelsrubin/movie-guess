@@ -6,9 +6,9 @@ import { TMDB_IMAGE_BASE } from "@/lib/constants"
 
 export const providers = [
 	{
-		logo: "/zLYr7OPvpskMA4S79E3vlCi71iC.jpg",
-		name: "Tubi TV",
-		id: "73",
+		logo: "/vEtdiYRPRbDCp1Tcn3BEPF1Ni76.jpg",
+		name: "Shudder",
+		id: "99",
 	},
 	{
 		logo: "/pbpMk2JmcoNnQwx5JGpXngfoWtp.jpg",
@@ -25,11 +25,7 @@ export const providers = [
 		name: "Amazon Prime Video",
 		id: "9",
 	},
-	{
-		logo: "/2E03IAZsX4ZaUqM7tXlctEPMGWS.jpg",
-		name: "Apple TV+",
-		id: "350",
-	},
+
 	{
 		logo: "/seGSXajazLMCKGB5hnRCidtjay1.jpg",
 		name: "Amazon Video",
@@ -45,15 +41,16 @@ export const providers = [
 		name: "Hulu",
 		id: "15",
 	},
-	{
-		logo: "/fzN5Jok5Ig1eJ7gyNGoMhnLSCfh.jpg",
-		name: "Crunchyroll",
-		id: "283",
-	},
+
 	{
 		logo: "/9BgaNQRMDvVlji1JBZi6tcfxpKx.jpg",
 		name: "fuboTV",
 		id: "257",
+	},
+	{
+		logo: "/yhrtzYd43pFIhRq0ruO8umJPuyn.jpg",
+		name: "Criterion Channel",
+		id: "258",
 	},
 ]
 export function ProvidersToggleGroup() {
