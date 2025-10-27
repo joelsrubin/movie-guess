@@ -44,7 +44,7 @@ export function SelectedMovie({
 							alt={`${selectedMovie.title} poster`}
 							width={500}
 							height={750}
-							className={`sm:w-auto w-[200px] object-contain transition-all duration-500 ${isSpinning ? "blur-sm" : ""}`}
+							className={`w-[200px] md:w-[300px] object-contain transition-all duration-500 ${isSpinning ? "blur-sm" : ""}`}
 							priority
 						/>
 					</a>
@@ -55,7 +55,7 @@ export function SelectedMovie({
 			<Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2">
 				<div className="flex flex-col items-center gap-2">
 					<div className="flex flex-row gap-2 max-h-12">
-						<h2 className="text-lg sm:text-3xl md:text-5xl font-bold text-balance self-center">
+						<h2 className="text-lg sm:text-3xl  font-bold text-balance self-center">
 							{selectedMovie.title}
 						</h2>
 						{selectedMovie.blurb && (
