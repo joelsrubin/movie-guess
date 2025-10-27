@@ -41,7 +41,6 @@ export const providers = [
 		name: "Hulu",
 		id: "15",
 	},
-
 	{
 		logo: "/9BgaNQRMDvVlji1JBZi6tcfxpKx.jpg",
 		name: "fuboTV",

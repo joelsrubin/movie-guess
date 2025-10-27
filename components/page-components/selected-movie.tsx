@@ -5,6 +5,7 @@ import { ChevronsUpDown } from "lucide-react"
 import Image from "next/image"
 import { parseAsArrayOf, parseAsInteger, parseAsString, throttle, useQueryStates } from "nuqs"
 import { useEffect, useState } from "react"
+import { useWindowSize } from "@/hooks/use-window-size"
 import { movieKeys } from "@/lib/query-keys"
 import type { Movie } from "../movie-roulette"
 import { Button } from "../ui/button"
@@ -54,9 +55,10 @@ export function SelectedMovie({
 			}),
 		},
 	})
-	console.log(mutationState)
+
 	const hasError = mutationState[0]?.status === "error"
-	console.log({ hasError })
+	const { breakpoint } = useWindowSize()
+	const isMobile = breakpoint.name === "SM"
 	return hasError ? (
 		<NoImage variant="error" />
 	) : selectedMovie ? (
@@ -75,7 +77,7 @@ export function SelectedMovie({
 							width={500}
 							height={750}
 							onLoad={() => setIsLoading(false)}
-							className={`w-auto object-contain transition-all duration-500 ${isSpinning || isLoading ? "blur-sm" : ""}`}
+							className={`sm:w-auto w-[200px] object-contain transition-all duration-500 ${isSpinning || isLoading ? "blur-sm" : ""}`}
 							priority
 						/>
 					</a>
@@ -85,8 +87,10 @@ export function SelectedMovie({
 			)}
 			<Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-2">
 				<div className="flex flex-col items-center gap-2">
-					<div className="flex flex-row gap-2">
-						<h2 className="text-3xl md:text-5xl font-bold text-balance">{selectedMovie.title}</h2>
+					<div className="flex flex-row gap-2 max-h-12">
+						<h2 className="text-lg sm:text-3xl md:text-5xl font-bold text-balance self-center">
+							{selectedMovie.title}
+						</h2>
 						{selectedMovie.blurb && (
 							<CollapsibleTrigger asChild>
 								<Button variant="ghost" size="icon" className="gap-2">
@@ -95,7 +99,7 @@ export function SelectedMovie({
 							</CollapsibleTrigger>
 						)}
 					</div>
-					<p className="text-xl md:text-2xl text-muted-foreground">{selectedMovie.year}</p>
+					<p className="text-sm md:text-2xl text-muted-foreground">{selectedMovie.year}</p>
 				</div>
 				<CollapsibleContent className="max-w-2xl mx-auto px-4 pb-4">
 					<p className="text-muted-foreground text-sm text-balance">{selectedMovie.blurb}</p>
