@@ -61,7 +61,7 @@ export function ProvidersToggleGroup() {
 	return (
 		<>
 			<h2 className="text-sm font-semibold text-foreground mb-0">Providers</h2>
-			<div className="overflow-x-scroll -mx-4 px-4">
+			<div className="overflow-x-scroll -mx-4 px-4 min-h-20">
 				<ToggleGroup
 					type="multiple"
 					variant="outline"
@@ -71,7 +71,7 @@ export function ProvidersToggleGroup() {
 					onValueChange={(value) => setParams({ providers: value })}
 					defaultValue={params.providers}
 				>
-					{providers?.map((p) => {
+					{providers.map((p) => {
 						return (
 							<ToggleGroupItem
 								key={p.id}

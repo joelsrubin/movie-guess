@@ -1,6 +1,6 @@
 "use client"
 
-import { Film, Share } from "lucide-react"
+import { Film, FilterIcon, Share } from "lucide-react"
 import { toast } from "sonner"
 
 import { useWindowSize } from "@/hooks/use-window-size"
@@ -37,7 +37,14 @@ export default function Header({ queueButton }: HeaderProps) {
 			</div>
 			<div className="flex items-center gap-3">
 				{queueButton && <div>{queueButton}</div>}
-				<FiltersModal />
+				<FiltersModal
+					trigger={
+						<Button>
+							<FilterIcon className="size-4" />
+							Filters
+						</Button>
+					}
+				/>
 				<ButtonGroup>
 					<ModeToggle />
 					<Button variant="outline" size="icon" onClick={shareOrCopyToClipboard}>

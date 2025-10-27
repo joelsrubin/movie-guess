@@ -1,6 +1,5 @@
 "use client"
 
-import { FilterIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
 	Dialog,
@@ -16,15 +15,10 @@ import { ProvidersToggleGroup } from "../filters/providers-toggle-group"
 import { YearSlider } from "../filters/year-slider"
 import { Separator } from "../ui/separator"
 
-export function FiltersModal() {
+export function FiltersModal({ trigger }: { trigger: React.ReactNode }) {
 	return (
 		<Dialog>
-			<DialogTrigger asChild>
-				<Button>
-					<FilterIcon className="size-4" />
-					Filters
-				</Button>
-			</DialogTrigger>
+			<DialogTrigger asChild>{trigger}</DialogTrigger>
 			<DialogContent
 				aria-describedby="queue-modal"
 				className="max-w-3xl max-h-[80vh] flex flex-col"

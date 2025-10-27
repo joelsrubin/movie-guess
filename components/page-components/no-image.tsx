@@ -1,5 +1,7 @@
 "use client"
 import { PlusCircle, TriangleAlert } from "lucide-react"
+import { FiltersModal } from "../modals/filters-modal"
+import { Button } from "../ui/button"
 import { Empty, EmptyDescription, EmptyMedia } from "../ui/empty"
 
 export function NoImage({ variant = "error" }: { variant?: "error" | "default" }) {
@@ -16,7 +18,13 @@ export function NoImage({ variant = "error" }: { variant?: "error" | "default" }
 	const defaultContent = (
 		<>
 			<EmptyMedia variant="icon">
-				<PlusCircle />
+				<FiltersModal
+					trigger={
+						<Button size="icon" variant="outline">
+							<PlusCircle />
+						</Button>
+					}
+				/>
 			</EmptyMedia>
 
 			<EmptyDescription>Add a filter to get started</EmptyDescription>

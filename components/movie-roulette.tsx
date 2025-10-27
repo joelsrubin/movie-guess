@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/card"
 import { fetchRandomMovie } from "@/lib/api"
 import { QUEUE_STORAGE_KEY } from "@/lib/constants"
 import { movieKeys } from "@/lib/query-keys"
-import { providers } from "./filters/providers-toggle-group"
+import { ProvidersToggleGroup, providers } from "./filters/providers-toggle-group"
 import Header from "./page-components/header"
 import { SelectedMovie } from "./page-components/selected-movie"
 import { ButtonGroup } from "./ui/button-group"
@@ -243,6 +243,7 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 										</Badge>
 									)}
 								</div>
+								<ProvidersToggleGroup />
 							</div>
 						</div>
 					</div>
