@@ -61,7 +61,7 @@ export function ProvidersToggleGroup() {
 	return (
 		<>
 			<h2 className="text-sm font-semibold text-foreground mb-0">Providers</h2>
-			<div className="overflow-x-scroll -mx-4 px-4 min-h-20">
+			<div className="overflow-x-scroll px-4 min-h-30">
 				<ToggleGroup
 					type="multiple"
 					variant="outline"

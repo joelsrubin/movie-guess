@@ -17,7 +17,7 @@ export function YearSlider() {
 						: `${params.year_start}–${params.year_end}`}
 				</span>
 			</div>
-			<div className="flex flex-row justify-between items-center">
+			<div className="flex flex-row justify-center items-center">
 				<Slider
 					min={MIN_YEAR}
 					max={MAX_YEAR}
@@ -26,7 +26,7 @@ export function YearSlider() {
 					onValueChange={(value) => {
 						setParams({ year_start: value[0], year_end: value[1] })
 					}}
-					className="w-full"
+					className="w-[90%]"
 				/>
 			</div>
 		</div>
