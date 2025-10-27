@@ -1,11 +1,11 @@
 "use client"
 
-import { useMutationState, useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { ChevronsUpDown } from "lucide-react"
 import Image from "next/image"
-import { parseAsArrayOf, parseAsInteger, parseAsString, throttle, useQueryStates } from "nuqs"
-import { useEffect, useState } from "react"
-import { useWindowSize } from "@/hooks/use-window-size"
+
+import { useState } from "react"
+
 import { movieKeys } from "@/lib/query-keys"
 import type { Movie } from "../movie-roulette"
 import { Button } from "../ui/button"
@@ -27,39 +27,7 @@ export function SelectedMovie({
 
 	const [isOpen, setIsOpen] = useState(false)
 
-	const [isLoading, setIsLoading] = useState(false)
-
-	useEffect(() => {
-		if (isSpinning) {
-			setIsLoading(true)
-		}
-	}, [isSpinning])
-
-	const [params] = useQueryStates(
-		{
-			genres: parseAsArrayOf(parseAsString).withDefault([]),
-			year_start: parseAsInteger.withDefault(new Date().getFullYear()),
-			year_end: parseAsInteger.withDefault(new Date().getFullYear()),
-			movieId: parseAsInteger,
-			providers: parseAsArrayOf(parseAsString).withDefault([]),
-		},
-		{ shallow: false, limitUrlUpdates: throttle(1000) },
-	)
-	const mutationState = useMutationState({
-		filters: {
-			mutationKey: movieKeys.random({
-				genres: params.genres,
-				yearStart: params.year_start,
-				yearEnd: params.year_end,
-				providers: params.providers,
-			}),
-		},
-	})
-
-	const hasError = mutationState[0]?.status === "error"
-	const { breakpoint } = useWindowSize()
-	const isMobile = breakpoint.name === "SM"
-	return hasError ? (
+	return selectedMovie?.title === "NO MOVIE FOUND" ? (
 		<NoImage variant="error" />
 	) : selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
@@ -76,8 +44,7 @@ export function SelectedMovie({
 							alt={`${selectedMovie.title} poster`}
 							width={500}
 							height={750}
-							onLoad={() => setIsLoading(false)}
-							className={`sm:w-auto w-[200px] object-contain transition-all duration-500 ${isSpinning || isLoading ? "blur-sm" : ""}`}
+							className={`sm:w-auto w-[200px] object-contain transition-all duration-500 ${isSpinning ? "blur-sm" : ""}`}
 							priority
 						/>
 					</a>

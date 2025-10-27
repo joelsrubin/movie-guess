@@ -94,7 +94,12 @@ export function MovieRoulette({ defaultData }: { defaultData: Movie | null }) {
 		}),
 		onSuccess: (movie) => {
 			queryClient.setQueryData(movieKeys.selected(), movie)
+
 			setParams({ movieId: movie.id })
+		},
+		onError: () => {
+			queryClient.setQueryData(movieKeys.selected(), { title: "NO MOVIE FOUND" })
+			setParams({ movieId: null })
 		},
 	})
 

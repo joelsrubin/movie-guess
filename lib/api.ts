@@ -1,4 +1,5 @@
 import type { Movie } from "@/components/movie-roulette"
+import { BASE_URL } from "./constants"
 
 const API_KEY = "57f535f358393665753c938201a145cb"
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"
@@ -81,23 +82,40 @@ export async function fetchRandomMovie(params: FetchMovieParams): Promise<Movie>
 
 	const detailData = data.results[Math.floor(Math.random() * data.results.length)]
 
-	const reverseGenreMap: Record<number, string> = Object.fromEntries(
-		Object.entries(genreMap).map(([name, id]) => [id, name]),
-	)
-
 	if (!detailData.id) {
 		throw new Error("Failed to fetch movie details")
 	}
 
-	return {
-		title: detailData.title,
-		year: new Date(detailData.release_date).getFullYear(),
-		genres: detailData.genre_ids
-			? detailData.genre_ids.map((id: number) => reverseGenreMap[id]).filter(Boolean)
-			: [],
-		id: detailData.id,
-		imdb_id: detailData.imdb_id,
-		poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
-		blurb: detailData.overview,
+	const deeperObj = await fetchMovieFromUrl({ movieId: detailData.id })
+	if (!deeperObj) {
+		throw new Error("Failed to fetch movie details")
 	}
+	return deeperObj
+}
+
+export const fetchMovieFromUrl = async ({ movieId }: { movieId?: number }) => {
+	if (movieId) {
+		try {
+			const detailResponse = await fetch(`${BASE_URL}/movie/${movieId}?api_key=${API_KEY}`, {
+				cache: "force-cache",
+			})
+			const detailData = await detailResponse.json()
+			console.log({ detailData })
+			if (detailData.id) {
+				return {
+					title: detailData.title,
+					year: new Date(detailData.release_date).getFullYear(),
+					genres: detailData.genres ? detailData.genres.map((g: { name: string }) => g.name) : [],
+					id: detailData.id,
+					imdb_id: detailData.imdb_id,
+					poster: detailData.poster_path ? `${TMDB_IMAGE_BASE}${detailData.poster_path}` : "",
+					blurb: detailData.overview,
+				}
+			}
+			return null
+		} catch (error) {
+			console.error("Failed to fetch movie from URL:", error)
+		}
+	}
+	return null
 }
