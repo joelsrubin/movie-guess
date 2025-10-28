@@ -100,7 +100,7 @@ export const fetchMovieFromUrl = async ({ movieId }: { movieId?: number }) => {
 				cache: "force-cache",
 			})
 			const detailData = await detailResponse.json()
-			console.log({ detailData })
+
 			if (detailData.id) {
 				return {
 					title: detailData.title,

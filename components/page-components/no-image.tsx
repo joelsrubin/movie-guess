@@ -4,14 +4,20 @@ import { FiltersModal } from "../modals/filters-modal"
 import { Button } from "../ui/button"
 import { Empty, EmptyDescription, EmptyMedia } from "../ui/empty"
 
-export function NoImage({ variant = "error" }: { variant?: "error" | "default" }) {
+export function NoImage({
+	variant = "error",
+	description = "Image not available",
+}: {
+	variant?: "error" | "default"
+	description?: string
+}) {
 	const errorContent = (
 		<>
 			<EmptyMedia variant="icon">
 				<TriangleAlert />
 			</EmptyMedia>
 
-			<EmptyDescription>Image not available</EmptyDescription>
+			<EmptyDescription>{description}</EmptyDescription>
 		</>
 	)
 

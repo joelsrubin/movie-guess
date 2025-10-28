@@ -28,7 +28,7 @@ export function SelectedMovie({
 	const [isOpen, setIsOpen] = useState(false)
 
 	return selectedMovie?.title === "NO MOVIE FOUND" ? (
-		<NoImage variant="error" />
+		<NoImage variant="error" description="No movie found. Refine your search" />
 	) : selectedMovie ? (
 		<div className="text-center space-y-4 animate-in fade-in duration-300">
 			{selectedMovie.poster ? (

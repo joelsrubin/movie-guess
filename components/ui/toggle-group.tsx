@@ -55,7 +55,7 @@ function ToggleGroupItem({
 	...props
 }: React.ComponentProps<typeof ToggleGroupPrimitive.Item> & VariantProps<typeof toggleVariants>) {
 	const context = React.useContext(ToggleGroupContext)
-	console.log({ props })
+
 	return (
 		<ToggleGroupPrimitive.Item
 			defaultChecked={props.defaultChecked}
