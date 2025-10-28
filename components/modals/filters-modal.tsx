@@ -27,7 +27,7 @@ export function FiltersModal({ trigger }: { trigger: React.ReactNode }) {
 					<DialogTitle>Filters</DialogTitle>
 					<Separator />
 				</DialogHeader>
-				<div className="flex flex-col space-y-10 overflow-scroll">
+				<div className="flex flex-col space-y-6 overflow-scroll">
 					<GenreFilters />
 					<Separator />
 					<ProvidersToggleGroup />

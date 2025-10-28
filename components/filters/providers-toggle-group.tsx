@@ -57,7 +57,10 @@ export function ProvidersToggleGroup() {
 	return (
 		<>
 			<h2 className="text-sm font-semibold text-foreground mb-0">Providers</h2>
-			<div className="overflow-x-scroll px-4 min-h-30">
+			<div
+				className="overflow-x-auto px-4 min-h-30"
+				style={{ scrollbarColor: "var(--border) transparent", scrollbarWidth: "thin" }}
+			>
 				<ToggleGroup
 					type="multiple"
 					variant="outline"
